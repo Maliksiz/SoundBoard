@@ -1,0 +1,542 @@
+<div id="event-soundboard">
+
+<div class="es-loader" id="es-loader">
+    <div class="es-loader-box">
+        <h2>EVENT SOUNDBOARD</h2>
+
+        <div class="es-progress">
+            <div class="es-progress-bar" id="es-progress-bar"></div>
+        </div>
+
+        <div class="es-loading-text" id="es-loading-text">
+            Memuat audio...
+        </div>
+    </div>
+</div>
+
+<div class="es-app" id="es-app">
+
+    <div class="es-toolbar">
+
+        <div class="es-volume">
+            <label>🔊 Master Volume</label>
+            <input
+                type="range"
+                id="es-master-volume"
+                min="0"
+                max="100"
+                value="80">
+        </div>
+
+        <button id="es-stop-all">
+            ⏹ STOP ALL
+        </button>
+
+    </div>
+
+    <div class="es-grid" id="es-grid"></div>
+
+</div>
+
+<style>
+#event-soundboard{
+    --primary:#ff5f1f;
+    --primary-hover:#e65117;
+    --bg:#f7f8fa;
+    --card:#fff;
+    --text:#222;
+    --border:#e5e7eb;
+
+    font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+/* LOADER */
+
+#event-soundboard .es-loader{
+    position:fixed;
+    inset:0;
+    background:white;
+    z-index:999999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+#event-soundboard .es-loader-box{
+    width:min(500px,90%);
+    text-align:center;
+}
+
+#event-soundboard .es-progress{
+    height:14px;
+    background:#eee;
+    border-radius:999px;
+    overflow:hidden;
+    margin:20px 0;
+}
+
+#event-soundboard .es-progress-bar{
+    width:0;
+    height:100%;
+    background:var(--primary);
+    transition:.3s;
+}
+
+#event-soundboard .es-loading-text{
+    color:#666;
+}
+
+/* APP */
+
+#event-soundboard .es-app{
+    display:none;
+    padding:15px;
+    background:var(--bg);
+    border-radius:18px;
+}
+
+/* TOOLBAR */
+
+#event-soundboard .es-toolbar{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:white;
+    border-radius:16px;
+    padding:15px;
+    margin-bottom:20px;
+    display:flex;
+    gap:15px;
+    align-items:center;
+    flex-wrap:wrap;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+#event-soundboard .es-volume{
+    flex:1;
+    min-width:220px;
+}
+
+#event-soundboard .es-volume label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+}
+
+#event-soundboard #es-master-volume{
+    width:100%;
+}
+
+#event-soundboard #es-stop-all{
+    border:none;
+    background:#dc2626;
+    color:white;
+    font-weight:700;
+    cursor:pointer;
+    border-radius:12px;
+    min-height:52px;
+    padding:0 20px;
+}
+
+/* GRID */
+
+#event-soundboard .es-grid{
+    display:grid;
+    grid-template-columns:
+    repeat(auto-fit,minmax(320px,1fr));
+    gap:18px;
+}
+
+/* CARD */
+
+#event-soundboard .es-card{
+    background:var(--card);
+    border-radius:18px;
+    padding:18px;
+    box-shadow:0 5px 20px rgba(0,0,0,.05);
+    transition:.25s;
+}
+
+#event-soundboard .es-card.active{
+    border:2px solid var(--primary);
+    box-shadow:0 10px 30px rgba(255,95,31,.25);
+}
+
+#event-soundboard .es-title{
+    font-weight:700;
+    margin-bottom:12px;
+    line-height:1.4;
+}
+
+#event-soundboard .es-status{
+    font-size:13px;
+    color:#666;
+    margin-bottom:12px;
+}
+
+#event-soundboard .es-card.active .es-status{
+    color:var(--primary);
+    font-weight:700;
+}
+
+#event-soundboard .es-buttons{
+    display:flex;
+    gap:10px;
+    margin-bottom:15px;
+}
+
+#event-soundboard .es-btn{
+    flex:1;
+    border:none;
+    border-radius:12px;
+    min-height:52px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+#event-soundboard .es-play{
+    background:var(--primary);
+    color:white;
+}
+
+#event-soundboard .es-play:hover{
+    background:var(--primary-hover);
+}
+
+#event-soundboard .es-stop{
+    background:#f1f3f5;
+}
+
+#event-soundboard .es-seek{
+    width:100%;
+    height:10px;
+    cursor:pointer;
+}
+
+#event-soundboard .es-time{
+    margin-top:8px;
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    color:#666;
+}
+
+/* TABLET */
+
+@media(max-width:768px){
+
+    #event-soundboard .es-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+}
+
+/* MOBILE */
+
+@media(max-width:560px){
+
+    #event-soundboard .es-grid{
+        grid-template-columns:1fr;
+    }
+
+    #event-soundboard .es-toolbar{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    #event-soundboard #es-stop-all{
+        width:100%;
+    }
+
+}
+</style>
+
+<script>
+(function(){
+
+const sounds = [
+{
+title:"🕌 Backsound Islami",
+url:"https://maliksiz.github.io/SoundBoard/Backsound%20Islami%20%20Aesthetic%20%20Backsound%20music%20islam.mp3"
+},
+{
+title:"🇮🇩 Indonesia Raya",
+url:"https://maliksiz.github.io/SoundBoard/LAGU%20INDONESIA%20RAYA%20TEXT%20DAN%20VOCAL%20ORIGINAL%20%20OFFICIAL.mp3"
+},
+{
+title:"🎓 Musik Pengiring",
+url:"https://maliksiz.github.io/SoundBoard/Musik%20Pengiring%20Maju%20Ke%20Panggung.mp3"
+},
+{
+title:"⚠️ Musik Tegang",
+url:"https://maliksiz.github.io/SoundBoard/Musik%20tegang%20backsound%20menegangkan%20no%20copyright.mp3"
+},
+{
+title:"🏆 Red Carpet",
+url:"https://maliksiz.github.io/SoundBoard/Red%20Carpet%20-%20%20by%20PraskMusic%20%5BAward%20Ceremony%20Opening%20Music%5D.mp3"
+}
+];
+
+const grid = document.getElementById("es-grid");
+
+let currentAudio = null;
+let currentCard = null;
+let loaded = 0;
+
+const audioList = [];
+
+sounds.forEach(sound=>{
+
+    const audio = new Audio(sound.url);
+    audio.preload = "auto";
+    audio.volume = .8;
+
+    audioList.push(audio);
+
+    const card = document.createElement("div");
+    card.className = "es-card";
+
+    card.innerHTML = `
+        <div class="es-title">${sound.title}</div>
+
+        <div class="es-status">
+            Siap dimainkan
+        </div>
+
+        <div class="es-buttons">
+            <button class="es-btn es-play">
+                ▶ PLAY
+            </button>
+
+            <button class="es-btn es-stop">
+                ⏹ STOP
+            </button>
+        </div>
+
+        <input
+            type="range"
+            class="es-seek"
+            min="0"
+            max="100"
+            value="0">
+
+        <div class="es-time">
+            <span class="current">00:00</span>
+            <span class="duration">00:00</span>
+        </div>
+    `;
+
+    grid.appendChild(card);
+
+    const playBtn = card.querySelector(".es-play");
+    const stopBtn = card.querySelector(".es-stop");
+    const seek = card.querySelector(".es-seek");
+    const current = card.querySelector(".current");
+    const duration = card.querySelector(".duration");
+    const status = card.querySelector(".es-status");
+
+    audio.addEventListener("loadedmetadata",()=>{
+        duration.textContent =
+        format(audio.duration);
+    });
+
+    audio.addEventListener("timeupdate",()=>{
+
+        current.textContent =
+        format(audio.currentTime);
+
+        if(audio.duration){
+            seek.value =
+            (audio.currentTime/audio.duration)*100;
+        }
+
+    });
+
+    audio.addEventListener("ended",()=>{
+        card.classList.remove("active");
+        status.textContent =
+        "Selesai";
+    });
+
+    seek.addEventListener("input",()=>{
+
+        if(audio.duration){
+            audio.currentTime =
+            (seek.value/100)*audio.duration;
+        }
+
+    });
+
+    playBtn.addEventListener("click",()=>{
+
+        if(currentAudio && currentAudio !== audio){
+            fadeOut(currentAudio);
+
+            if(currentCard){
+                currentCard.classList.remove("active");
+            }
+        }
+
+        currentAudio = audio;
+        currentCard = card;
+
+        card.classList.add("active");
+
+        status.textContent =
+        "🟢 Sedang diputar";
+
+        audio.volume =
+        document
+        .getElementById("es-master-volume")
+        .value / 100;
+
+        audio.play();
+
+    });
+
+    stopBtn.addEventListener("click",()=>{
+
+        audio.pause();
+        audio.currentTime = 0;
+
+        card.classList.remove("active");
+
+        status.textContent =
+        "Dihentikan";
+
+    });
+
+    audio.addEventListener(
+        "canplaythrough",
+        ()=>{
+            loaded++;
+
+            const percent =
+            loaded/sounds.length*100;
+
+            document
+            .getElementById("es-progress-bar")
+            .style.width =
+            percent+"%";
+
+            document
+            .getElementById("es-loading-text")
+            .innerText =
+            `${loaded}/${sounds.length} audio siap`;
+
+            if(loaded === sounds.length){
+
+                setTimeout(()=>{
+
+                    document
+                    .getElementById("es-loader")
+                    .style.display="none";
+
+                    document
+                    .getElementById("es-app")
+                    .style.display="block";
+
+                },500);
+
+            }
+        },
+        {once:true}
+    );
+
+});
+
+document
+.getElementById("es-master-volume")
+.addEventListener("input",function(){
+
+    const vol = this.value/100;
+
+    audioList.forEach(a=>{
+        a.volume = vol;
+    });
+
+});
+
+document
+.getElementById("es-stop-all")
+.addEventListener("click",()=>{
+
+    audioList.forEach(a=>{
+
+        a.pause();
+        a.currentTime = 0;
+
+    });
+
+    document
+    .querySelectorAll(".es-card")
+    .forEach(card=>{
+
+        card.classList.remove("active");
+
+        card.querySelector(".es-status")
+        .textContent =
+        "Dihentikan";
+
+    });
+
+});
+
+function fadeOut(audio){
+
+    let v = audio.volume;
+
+    const i = setInterval(()=>{
+
+        v -= 0.05;
+
+        if(v <= 0){
+
+            clearInterval(i);
+
+            audio.pause();
+            audio.currentTime = 0;
+
+            audio.volume =
+            document
+            .getElementById("es-master-volume")
+            .value/100;
+
+        }else{
+
+            audio.volume = v;
+
+        }
+
+    },40);
+
+}
+
+function format(sec){
+
+    if(isNaN(sec))
+        return "00:00";
+
+    const m =
+    Math.floor(sec/60);
+
+    const s =
+    Math.floor(sec%60);
+
+    return String(m)
+    .padStart(2,"0")
+    + ":" +
+    String(s)
+    .padStart(2,"0");
+
+}
+
+})();
+</script>
+
+</div>
