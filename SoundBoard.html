@@ -1,547 +1,1816 @@
-<div class='tit'>
-<h1>SIMPLE SOUNDBOARD WEB</h1>
-    <p><i>by <a href="https://maliksiz.my.id">Maliksiz</a></i></p></div>
-<div id="event-soundboard">
-<div class="es-loader" id="es-loader">
-    <div class="es-loader-box">
-        <h2>EVENT SOUNDBOARD</h2>
-
-        <div class="es-progress">
-            <div class="es-progress-bar" id="es-progress-bar"></div>
-        </div>
-
-        <div class="es-loading-text" id="es-loading-text">
-            Memuat audio...
-        </div>
-    </div>
-</div>
-
-<div class="es-app" id="es-app">
-
-    <div class="es-toolbar">
-
-        <div class="es-volume">
-            <label>🔊 Master Volume</label>
-            <input
-                type="range"
-                id="es-master-volume"
-                min="0"
-                max="100"
-                value="80">
-        </div>
-
-        <button id="es-stop-all">
-            ⏹ STOP ALL
-        </button>
-
-    </div>
-
-    <div class="es-grid" id="es-grid"></div>
-
-</div>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <style>
-    .tit{
-        text-align:center;
-    }
-#event-soundboard{
+:root{
     --primary:#ff5f1f;
     --primary-hover:#e65117;
     --bg:#f7f8fa;
-    --card:#fff;
-    --text:#222;
+    --panel:#ffffff;
+    --card:#ffffff;
+    --text:#1f2937;
+    --muted:#6b7280;
     --border:#e5e7eb;
-
-    font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+    --shadow:0 10px 30px rgba(0,0,0,.08);
+    --shadow-soft:0 6px 18px rgba(0,0,0,.06);
+    --danger:#dc2626;
+    --success:#16a34a;
+    --warning:#d97706;
+    --chip:#f3f4f6;
+    --chipText:#374151;
+    --inputBg:#fff;
+    --focus:0 0 0 3px rgba(255,95,31,.20);
 }
 
-/* LOADER */
+#event-soundboard[data-theme="dark"]{
+    --bg:#0b1220;
+    --panel:#111827;
+    --card:#111827;
+    --text:#e5e7eb;
+    --muted:#9ca3af;
+    --border:#243041;
+    --shadow:0 12px 30px rgba(0,0,0,.35);
+    --shadow-soft:0 6px 18px rgba(0,0,0,.22);
+    --chip:#1f2937;
+    --chipText:#d1d5db;
+    --inputBg:#0f172a;
+}
 
-#event-soundboard .es-loader{
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select,textarea{font:inherit}
+button,input,select{outline:none}
+#event-soundboard{
+    max-width:1500px;
+    margin:0 auto;
+    padding:16px;
+    position:relative;
+}
+
+/* Loader */
+.es-loader{
     position:fixed;
     inset:0;
-    background:white;
     z-index:999999;
+    background:linear-gradient(180deg,#fff, #f7f8fa);
     display:flex;
     align-items:center;
     justify-content:center;
+    padding:20px;
 }
-
-#event-soundboard .es-loader-box{
-    width:min(500px,90%);
+#event-soundboard[data-theme="dark"] .es-loader{
+    background:linear-gradient(180deg,#0b1220,#111827);
+}
+.es-loader-box{
+    width:min(560px,100%);
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:24px;
+    box-shadow:var(--shadow);
+    padding:26px;
     text-align:center;
 }
-
-#event-soundboard .es-progress{
+.es-loader-title{
+    font-size:1.3rem;
+    font-weight:800;
+    margin:0 0 6px;
+}
+.es-loader-sub{
+    color:var(--muted);
+    margin:0 0 18px;
+}
+.es-progress{
     height:14px;
-    background:#eee;
+    background:rgba(0,0,0,.06);
     border-radius:999px;
     overflow:hidden;
-    margin:20px 0;
 }
-
-#event-soundboard .es-progress-bar{
-    width:0;
+.es-progress-bar{
+    width:0%;
     height:100%;
-    background:var(--primary);
-    transition:.3s;
+    background:linear-gradient(90deg,var(--primary),#ff8a50);
+    transition:width .25s ease;
+}
+.es-loading-text{
+    margin-top:14px;
+    color:var(--muted);
+    font-size:.95rem;
 }
 
-#event-soundboard .es-loading-text{
-    color:#666;
-}
-
-/* APP */
-
-#event-soundboard .es-app{
-    display:none;
-    padding:15px;
-    background:var(--bg);
-    border-radius:18px;
-}
-
-/* TOOLBAR */
-
-#event-soundboard .es-toolbar{
-    position:sticky;
-    top:0;
-    z-index:100;
-    background:white;
-    border-radius:16px;
-    padding:15px;
-    margin-bottom:20px;
+/* App wrapper */
+.es-app{display:none}
+.es-top{
     display:flex;
-    gap:15px;
-    align-items:center;
+    gap:14px;
+    align-items:stretch;
     flex-wrap:wrap;
-    box-shadow:0 5px 20px rgba(0,0,0,.08);
+    margin-bottom:14px;
 }
-
-#event-soundboard .es-volume{
+.es-cardbox,.es-toolbar,.es-library,.es-stats,.es-queue{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:20px;
+    box-shadow:var(--shadow-soft);
+}
+.es-toolbar{
+    position:sticky;
+    top:12px;
+    z-index:120;
+    padding:14px;
+    display:flex;
+    gap:12px;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+    backdrop-filter:saturate(1.2) blur(6px);
+}
+.es-toolbar > *{min-width:0}
+.es-toolbar-group{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    min-width:200px;
     flex:1;
-    min-width:220px;
 }
-
-#event-soundboard .es-volume label{
-    display:block;
-    margin-bottom:8px;
-    font-weight:600;
-}
-
-#event-soundboard #es-master-volume{
-    width:100%;
-}
-
-#event-soundboard #es-stop-all{
-    border:none;
-    background:#dc2626;
-    color:white;
+.es-toolbar-group label{
+    font-size:.85rem;
     font-weight:700;
-    cursor:pointer;
-    border-radius:12px;
-    min-height:52px;
-    padding:0 20px;
+    color:var(--muted);
 }
-
-/* GRID */
-
-#event-soundboard .es-grid{
-    display:grid;
-    grid-template-columns:
-    repeat(auto-fit,minmax(320px,1fr));
-    gap:18px;
-}
-
-/* CARD */
-
-#event-soundboard .es-card{
-    background:var(--card);
-    border-radius:18px;
-    padding:18px;
-    box-shadow:0 5px 20px rgba(0,0,0,.05);
-    transition:.25s;
-}
-
-#event-soundboard .es-card.active{
-    border:2px solid var(--primary);
-    box-shadow:0 10px 30px rgba(255,95,31,.25);
-}
-
-#event-soundboard .es-title{
-    font-weight:700;
-    margin-bottom:12px;
-    line-height:1.4;
-}
-
-#event-soundboard .es-status{
-    font-size:13px;
-    color:#666;
-    margin-bottom:12px;
-}
-
-#event-soundboard .es-card.active .es-status{
-    color:var(--primary);
-    font-weight:700;
-}
-
-#event-soundboard .es-buttons{
+.es-toolbar-row{
     display:flex;
     gap:10px;
-    margin-bottom:15px;
+    flex-wrap:wrap;
+    align-items:center;
 }
-
-#event-soundboard .es-btn{
-    flex:1;
+.es-toolbar input[type="range"]{width:100%}
+.es-input,.es-select,.es-textarea{
+    width:100%;
+    border:1px solid var(--border);
+    background:var(--inputBg);
+    color:var(--text);
+    border-radius:14px;
+    padding:12px 14px;
+    transition:.2s;
+}
+.es-input:focus,.es-select:focus,.es-textarea:focus{
+    box-shadow:var(--focus);
+    border-color:rgba(255,95,31,.45);
+}
+.es-btn{
     border:none;
-    border-radius:12px;
-    min-height:52px;
+    border-radius:14px;
+    min-height:46px;
+    padding:0 16px;
+    cursor:pointer;
+    font-weight:800;
+    transition:.2s;
+    background:var(--chip);
+    color:var(--chipText);
+}
+.es-btn:hover{transform:translateY(-1px)}
+.es-btn:active{transform:translateY(0)}
+.es-btn-primary{background:var(--primary);color:#fff}
+.es-btn-primary:hover{background:var(--primary-hover)}
+.es-btn-danger{background:var(--danger);color:#fff}
+.es-btn-success{background:var(--success);color:#fff}
+.es-btn-warning{background:var(--warning);color:#fff}
+.es-toggle{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    user-select:none;
+    cursor:pointer;
+    font-size:.95rem;
+}
+.es-toggle input{transform:scale(1.15)}
+.es-chips{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+.es-chip{
+    border:1px solid var(--border);
+    background:var(--chip);
+    color:var(--chipText);
+    border-radius:999px;
+    padding:8px 12px;
     cursor:pointer;
     font-weight:700;
+    font-size:.86rem;
 }
-
-#event-soundboard .es-play{
+.es-chip.active{
     background:var(--primary);
-    color:white;
+    color:#fff;
+    border-color:transparent;
+}
+.es-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:16px;
+}
+.es-library{
+    padding:14px;
+}
+.es-library-header{
+    display:flex;
+    gap:10px;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:12px;
+    flex-wrap:wrap;
+}
+.es-library-title{
+    margin:0;
+    font-size:1.15rem;
+    font-weight:800;
+}
+.es-subtle{color:var(--muted);font-size:.9rem}
+.es-drop{
+    margin:14px 0;
+    border:2px dashed rgba(107,114,128,.35);
+    border-radius:18px;
+    padding:18px;
+    text-align:center;
+    color:var(--muted);
+    background:rgba(255,255,255,.25);
+}
+#event-soundboard[data-theme="dark"] .es-drop{
+    background:rgba(255,255,255,.02);
+}
+.es-panel{
+    padding:14px;
+}
+.es-section{
+    margin-top:16px;
+}
+.es-section h3{
+    margin:0 0 10px;
+    font-size:1rem;
+}
+.es-queue-list,.es-folder-list,.es-fav-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+.es-queue-item,.es-folder-item,.es-fav-item,.es-history-item{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    align-items:center;
+    border:1px solid var(--border);
+    background:var(--card);
+    padding:10px 12px;
+    border-radius:14px;
+}
+.es-queue-item .meta,.es-folder-item .meta,.es-fav-item .meta,.es-history-item .meta{
+    min-width:0;
+}
+.es-queue-item strong,.es-folder-item strong,.es-fav-item strong,.es-history-item strong{
+    display:block;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+.es-queue-item small,.es-folder-item small,.es-fav-item small,.es-history-item small{
+    color:var(--muted);
 }
 
-#event-soundboard .es-play:hover{
-    background:var(--primary-hover);
+/* cards */
+.es-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:16px;
+    box-shadow:var(--shadow-soft);
+    transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    position:relative;
+    overflow:hidden;
 }
-
-#event-soundboard .es-stop{
-    background:#f1f3f5;
+.es-card:hover{transform:translateY(-2px)}
+.es-card.active{
+    border-color:rgba(255,95,31,.5);
+    box-shadow:0 16px 34px rgba(255,95,31,.16);
 }
-
-#event-soundboard .es-seek{
+.es-card.playing{
+    outline:2px solid rgba(255,95,31,.55);
+}
+.es-card.favorite::before{
+    content:"★";
+    position:absolute;
+    right:14px;
+    top:10px;
+    color:#f59e0b;
+    font-size:1.2rem;
+}
+.es-title{
+    margin:0 0 6px;
+    font-size:1.04rem;
+    font-weight:900;
+    line-height:1.35;
+}
+.es-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:12px;
+    color:var(--muted);
+    font-size:.86rem;
+}
+.es-tag{
+    padding:4px 10px;
+    background:var(--chip);
+    color:var(--chipText);
+    border-radius:999px;
+    font-weight:700;
+}
+.es-status{
+    font-size:.88rem;
+    color:var(--muted);
+    margin:0 0 12px;
+}
+.es-card.active .es-status{color:var(--primary);font-weight:800}
+.es-buttons{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:12px;
+}
+.es-buttons .es-btn{
+    flex:1 1 110px;
+    min-height:44px;
+}
+.es-row{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+}
+.es-row > *{flex:1 1 auto}
+.es-seek{
     width:100%;
-    height:10px;
-    cursor:pointer;
 }
-
-#event-soundboard .es-time{
+.es-time{
     margin-top:8px;
     display:flex;
     justify-content:space-between;
-    font-size:13px;
-    color:#666;
+    gap:10px;
+    font-size:.82rem;
+    color:var(--muted);
+}
+.es-mini{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:10px;
+}
+.es-mini button{
+    flex:0 0 auto;
+    min-height:38px;
+    padding:0 12px;
+    font-size:.85rem;
+}
+.es-wave{
+    height:4px;
+    width:100%;
+    border-radius:999px;
+    background:linear-gradient(90deg,rgba(255,95,31,.2),rgba(255,95,31,.5),rgba(255,95,31,.2));
+    margin-bottom:12px;
+    position:relative;
+    overflow:hidden;
+}
+.es-wave::after{
+    content:"";
+    position:absolute;
+    top:0;bottom:0;
+    width:35%;
+    left:-35%;
+    background:linear-gradient(90deg,transparent,rgba(255,95,31,.65),transparent);
+    animation:wave 1.9s linear infinite;
+}
+@keyframes wave{
+    to{left:100%}
 }
 
-/* TABLET */
+.es-stats,.es-queue{
+    padding:14px;
+}
+.es-two{
+    display:grid;
+    grid-template-columns:1.2fr .8fr;
+    gap:14px;
+    margin-top:14px;
+}
+.es-statgrid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+}
+.es-stat{
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:12px;
+    background:var(--card);
+}
+.es-stat strong{
+    display:block;
+    font-size:1.15rem;
+}
+.es-stat span{
+    color:var(--muted);
+    font-size:.86rem;
+}
+.es-alert{
+    border:1px solid rgba(255,95,31,.3);
+    background:rgba(255,95,31,.06);
+    color:var(--text);
+    border-radius:14px;
+    padding:12px;
+    margin-top:12px;
+    font-size:.92rem;
+}
+.es-foot{
+    margin-top:14px;
+    color:var(--muted);
+    font-size:.84rem;
+    line-height:1.45;
+}
+.es-hidden{display:none !important}
 
-@media(max-width:768px){
-
-    #event-soundboard .es-grid{
-        grid-template-columns:1fr 1fr;
-    }
-
+@media (max-width: 980px){
+    .es-two{grid-template-columns:1fr}
+}
+@media (max-width: 760px){
+    #event-soundboard{padding:12px}
+    .es-grid{grid-template-columns:1fr}
+    .es-toolbar{position:static}
+    .es-toolbar-group{min-width:100%}
+}
+@media (max-width: 540px){
+    .es-buttons .es-btn{flex-basis:100%}
+    .es-statgrid{grid-template-columns:1fr}
 }
 
-/* MOBILE */
-
-@media(max-width:560px){
-
-    #event-soundboard .es-grid{
-        grid-template-columns:1fr;
-    }
-
-    #event-soundboard .es-toolbar{
+@media (max-width: 1024px){
+    #event-soundboard{padding:12px}
+    .es-top{
         flex-direction:column;
-        align-items:stretch;
     }
-
-    #event-soundboard #es-stop-all{
+    .es-top > *{
         width:100%;
     }
-
+    .es-cardbox,.es-library,.es-stats,.es-queue{
+        border-radius:18px;
+    }
 }
+
+@media (max-width: 760px){
+    .es-toolbar{
+        padding:12px;
+        gap:10px;
+    }
+    .es-toolbar-group{
+        min-width:100%;
+        flex:1 1 100%;
+    }
+    .es-toolbar > .es-btn,
+    .es-toolbar label.es-btn{
+        width:100%;
+        justify-content:center;
+    }
+    .es-grid{
+        grid-template-columns:1fr !important;
+    }
+    .es-card{
+        padding:14px;
+    }
+    .es-buttons .es-btn{
+        flex:1 1 100%;
+        width:100%;
+    }
+    .es-mini{
+        flex-direction:column;
+    }
+    .es-mini button{
+        width:100%;
+    }
+    .es-statgrid{
+        grid-template-columns:1fr;
+    }
+    .es-loader-box{
+        padding:20px;
+        border-radius:20px;
+    }
+    .es-library-header{
+        align-items:flex-start;
+    }
+    .es-queue-item,
+    .es-folder-item,
+    .es-fav-item,
+    .es-history-item{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+    .es-queue-item .es-btn,
+    .es-folder-item .es-btn,
+    .es-fav-item .es-btn,
+    .es-history-item .es-btn{
+        width:100%;
+    }
+    .es-top{
+        gap:12px;
+    }
+}
+
+@media (max-width: 480px){
+    #event-soundboard{
+        padding:10px;
+    }
+    .es-loader-box{
+        padding:18px;
+    }
+    .es-loader-title{
+        font-size:1.1rem;
+    }
+    .es-loader-sub,
+    .es-loading-text{
+        font-size:.88rem;
+    }
+    .es-card,
+    .es-library,
+    .es-stats,
+    .es-cardbox{
+        padding:12px;
+    }
+    .es-title{
+        font-size:1rem;
+    }
+    .es-meta{
+        gap:6px;
+    }
+    .es-tag{
+        padding:4px 8px;
+        font-size:.8rem;
+    }
+    .es-buttons{
+        gap:8px;
+    }
+    .es-time{
+        font-size:.78rem;
+    }
+    .es-alert,
+    .es-foot{
+        font-size:.8rem;
+    }
+}
+
+@media (max-width: 360px){
+    .es-toolbar-group label{
+        font-size:.8rem;
+    }
+    .es-btn{
+        min-height:42px;
+        padding:0 12px;
+    }
+    .es-input,
+    .es-select{
+        padding:11px 12px;
+    }
+}
+  .tit{ text-align:center;}
 </style>
+<div id="event-soundboard" data-theme="light">
+    <div class="es-loader" id="es-loader">
+        <div class="es-loader-box">
+            <h1 class="es-loader-title">Event Soundboard V3</h1>
+            <p class="es-loader-sub">Memuat default audio, database browser, dan tampilan acara.</p>
+            <div class="es-progress"><div class="es-progress-bar" id="es-progress-bar"></div></div>
+            <div class="es-loading-text" id="es-loading-text">Memuat audio...</div>
+        </div>
+    </div>
+
+    <div class="es-app" id="es-app">
+
+        <div class="es-toolbar">
+            <div class="es-toolbar-group" style="flex:1.5">
+                <label>Cari audio</label>
+                <input class="es-input" id="es-search" type="text" placeholder="Cari judul, tag, kategori..." />
+            </div>
+
+            <div class="es-toolbar-group">
+                <label>Master Volume</label>
+                <input id="es-master-volume" max="100" type="range" value="80" />
+            </div>
+
+            <div class="es-toolbar-group" style="min-width:220px;flex:.9">
+                <label>Folder aktif</label>
+                <select id="es-folder-filter" class="es-select"></select>
+            </div>
+
+            <div class="es-toolbar-group" style="min-width:220px;flex:.9">
+                <label>Kategori aktif</label>
+                <select id="es-category-filter" class="es-select"></select>
+            </div>
+
+            <button id="es-stop-all" class="es-btn es-btn-danger">⏹ STOP ALL</button>
+            <button id="es-theme-toggle" class="es-btn">🌙 Tema</button>
+            <button id="es-export-btn" class="es-btn">📦 Export</button>
+
+            <label class="es-btn" style="display:inline-flex;align-items:center;justify-content:center;gap:8px">
+                📥 Import
+                <input type="file" id="es-import-btn" accept=".json" hidden>
+            </label>
+        </div>
+
+        <div class="es-top">
+            <div class="es-cardbox" style="flex:1.2;padding:14px">
+                <div class="es-library-header">
+                    <h2 class="es-library-title">Tambah Audio</h2>
+                    <div class="es-subtle">Upload, link, atau drag & drop.</div>
+                </div>
+
+                <div class="es-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">
+                    <input class="es-input" id="es-new-title" type="text" placeholder="Judul audio" />
+                    <input class="es-input" id="es-new-url" type="text" placeholder="URL audio (mp3/ogg/wav)" />
+                    <input class="es-input" id="es-new-tags" type="text" placeholder="Tag dipisah koma" />
+                    <input class="es-input" id="es-new-folder" type="text" placeholder="Folder / Koleksi" />
+                    <select id="es-new-category" class="es-select">
+                        <option value="Opening">Opening</option>
+                        <option value="Backsound">Backsound</option>
+                        <option value="Pengiring">Pengiring</option>
+                        <option value="Tegang">Tegang</option>
+                        <option value="Penutup">Penutup</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                    <div class="es-row">
+                        <label class="es-btn es-btn-primary" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:100%">
+                            📁 Upload File
+                            <input type="file" id="es-file-input" accept="audio/*" multiple hidden>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="es-row" style="margin-top:10px">
+                    <button class="es-btn es-btn-primary" id="es-add-url">➕ Tambah dari Link</button>
+                    <button class="es-btn" id="es-clear-fields">🧹 Bersihkan</button>
+                    <label class="es-toggle"><input type="checkbox" id="es-mix-mode"> Mix mode</label>
+                    <label class="es-toggle"><input type="checkbox" id="es-queue-mode" checked> Queue mode</label>
+                    <label class="es-toggle"><input type="checkbox" id="es-auto-next" checked> Auto next</label>
+                    <label class="es-toggle"><input type="checkbox" id="es-show-favorites" checked> Tampilkan favorit</label>
+                </div>
+
+                <div class="es-drop" id="es-drop">Tarik file audio ke sini. Browser akan pura-pura santai, tapi dia kerjanya serius.</div>
+
+                <div class="es-alert">
+                    Default yang dikunci: <b>🕌 Backsound Islami</b>, <b>🇮🇩 Indonesia Raya</b>, <b>🎓 Musik Pengiring</b>. Tiga ini tidak bisa dihapus.
+                </div>
+            </div>
+
+            <div class="es-cardbox" style="flex:.8;padding:14px">
+                <div class="es-library-header">
+                    <h2 class="es-library-title">Favorit</h2>
+                    <div class="es-subtle">Tombol cepat dan hotkey 1-9.</div>
+                </div>
+                <div class="es-fav-list" id="es-fav-list"></div>
+
+                <div class="es-section">
+                    <h3>Statistik</h3>
+                    <div class="es-statgrid">
+                        <div class="es-stat"><strong id="es-stat-total">0</strong><span>Total audio</span></div>
+                        <div class="es-stat"><strong id="es-stat-fav">0</strong><span>Favorit</span></div>
+                        <div class="es-stat"><strong id="es-stat-play">0</strong><span>Total play</span></div>
+                        <div class="es-stat"><strong id="es-stat-min">0</strong><span>Menit terpakai</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="es-two">
+            <div class="es-library">
+                <div class="es-library-header">
+                    <h2 class="es-library-title">Library Audio</h2>
+                    <div class="es-subtle" id="es-library-count">0 item</div>
+                </div>
+                <div class="es-chips" id="es-category-chips"></div>
+                <div class="es-grid" id="es-grid"></div>
+            </div>
+
+            <div class="es-panel">
+                <div class="es-stats">
+                    <div class="es-library-header">
+                        <h2 class="es-library-title">Queue & Playlist</h2>
+                        <div class="es-subtle">Mainkan berurutan kalau mau acara terasa profesional, bukan panik.</div>
+                    </div>
+                    <div class="es-row" style="margin-bottom:10px">
+                        <button class="es-btn es-btn-success" id="es-play-queue">▶ Play Queue</button>
+                        <button class="es-btn" id="es-clear-queue">🗑 Clear Queue</button>
+                    </div>
+                    <div class="es-queue-list" id="es-queue-list"></div>
+                </div>
+
+                <div class="es-section es-stats">
+                    <div class="es-library-header">
+                        <h2 class="es-library-title">Folder/Koleksi</h2>
+                        <div class="es-subtle">Audio custom yang terkumpul rapi.</div>
+                    </div>
+                    <div class="es-folder-list" id="es-folder-list"></div>
+                </div>
+
+                <div class="es-section es-stats">
+                    <div class="es-library-header">
+                        <h2 class="es-library-title">Riwayat Putar</h2>
+                        <div class="es-subtle">10 terakhir.</div>
+                    </div>
+                    <div class="es-history-list" id="es-history-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="es-foot">
+            Hotkey: 1–9 memutar favorit/default berurutan, Space play/pause item aktif, S stop all, F cari, D tema, Q queue mode.
+            Backup JSON menyimpan metadata + audio data URL untuk file upload. Link audio ikut dibackup sebagai URL.
+        </div>
+    </div>
+</div>
 
 <script>
 (function(){
+'use strict';
 
-const sounds = [
-{
-title:"🕌 Backsound Islami",
-url:"https://maliksiz.github.io/SoundBoard/music-islami.mp3"
-},
-{
-title:"🇮🇩 Indonesia Raya",
-url:"https://maliksiz.github.io/SoundBoard/indonesia-raya.mp3"
-},
-{
-title:"🎓 Musik Pengiring",
-url:"https://maliksiz.github.io/SoundBoard/music-pengiring.mp3"
-},
-{
-title:"⚠️ Musik Tegang",
-url:"https://maliksiz.github.io/SoundBoard/music-tegang.mp3"
-},
-{
-title:"🏆 Red Carpet",
-url:"https://maliksiz.github.io/SoundBoard/music-redcarpet.mp3"
-}
+const DB_NAME = 'event_soundboard_v3';
+const DB_VERSION = 1;
+const STORE = 'sounds';
+const SETTINGS_KEY = 'es_v3_settings';
+const STATS_KEY = 'es_v3_stats';
+const HISTORY_KEY = 'es_v3_history';
+const DEFAULT_VOLUME = 0.8;
+
+const DEFAULT_SOUNDS = [
+    {
+        id: 'default-islami',
+        title: '🕌 Backsound Islami',
+        url: 'https://maliksiz.github.io/SoundBoard/music-islami.mp3',
+        category: 'Backsound',
+        tags: ['islami', 'default', 'backsound'],
+        folder: 'Default',
+        favorite: true,
+        locked: true,
+        loop: false,
+        plays: 0,
+        createdAt: Date.now()
+    },
+    {
+        id: 'default-indonesia-raya',
+        title: '🇮🇩 Indonesia Raya',
+        url: 'https://maliksiz.github.io/SoundBoard/indonesia-raya.mp3',
+        category: 'Opening',
+        tags: ['nasional', 'default', 'opening'],
+        folder: 'Default',
+        favorite: true,
+        locked: true,
+        loop: false,
+        plays: 0,
+        createdAt: Date.now()
+    },
+    {
+        id: 'default-pengiring',
+        title: '🎓 Musik Pengiring',
+        url: 'https://maliksiz.github.io/SoundBoard/music-pengiring.mp3',
+        category: 'Pengiring',
+        tags: ['pengiring', 'default', 'acara'],
+        folder: 'Default',
+        favorite: true,
+        locked: true,
+        loop: false,
+        plays: 0,
+        createdAt: Date.now()
+    },
+    {
+        id: 'default-tegang',
+        title: '⚠️ Musik Tegang',
+        url: 'https://maliksiz.github.io/SoundBoard/music-tegang.mp3',
+        category: 'Tegang',
+        tags: ['tegang', 'dramatis'],
+        folder: 'Default',
+        favorite: false,
+        locked: true,
+        loop: false,
+        plays: 0,
+        createdAt: Date.now()
+    },
+    {
+        id: 'default-redcarpet',
+        title: '🏆 Red Carpet',
+        url: 'https://maliksiz.github.io/SoundBoard/music-redcarpet.mp3',
+        category: 'Opening',
+        tags: ['redcarpet', 'seremonial'],
+        folder: 'Default',
+        favorite: false,
+        locked: true,
+        loop: false,
+        plays: 0,
+        createdAt: Date.now()
+    }
 ];
 
-const grid = document.getElementById("es-grid");
+const els = {
+    root: document.getElementById('event-soundboard'),
+    loader: document.getElementById('es-loader'),
+    progressBar: document.getElementById('es-progress-bar'),
+    loadingText: document.getElementById('es-loading-text'),
+    app: document.getElementById('es-app'),
+    grid: document.getElementById('es-grid'),
+    search: document.getElementById('es-search'),
+    master: document.getElementById('es-master-volume'),
+    stopAll: document.getElementById('es-stop-all'),
+    themeToggle: document.getElementById('es-theme-toggle'),
+    exportBtn: document.getElementById('es-export-btn'),
+    importBtn: document.getElementById('es-import-btn'),
+    addUrl: document.getElementById('es-add-url'),
+    clearFields: document.getElementById('es-clear-fields'),
+    fileInput: document.getElementById('es-file-input'),
+    newTitle: document.getElementById('es-new-title'),
+    newUrl: document.getElementById('es-new-url'),
+    newTags: document.getElementById('es-new-tags'),
+    newFolder: document.getElementById('es-new-folder'),
+    newCategory: document.getElementById('es-new-category'),
+    folderFilter: document.getElementById('es-folder-filter'),
+    categoryFilter: document.getElementById('es-category-filter'),
+    categoryChips: document.getElementById('es-category-chips'),
+    queueList: document.getElementById('es-queue-list'),
+    playQueue: document.getElementById('es-play-queue'),
+    clearQueue: document.getElementById('es-clear-queue'),
+    favList: document.getElementById('es-fav-list'),
+    folderList: document.getElementById('es-folder-list'),
+    historyList: document.getElementById('es-history-list'),
+    drop: document.getElementById('es-drop'),
+    libraryCount: document.getElementById('es-library-count'),
+    statTotal: document.getElementById('es-stat-total'),
+    statFav: document.getElementById('es-stat-fav'),
+    statPlay: document.getElementById('es-stat-play'),
+    statMin: document.getElementById('es-stat-min'),
+    mixMode: document.getElementById('es-mix-mode'),
+    queueMode: document.getElementById('es-queue-mode'),
+    autoNext: document.getElementById('es-auto-next'),
+    showFavorites: document.getElementById('es-show-favorites')
+};
 
-let currentAudio = null;
-let currentCard = null;
-let loaded = 0;
+let db = null;
+let currentCardId = null;
+let currentQueue = [];
+let queueIndex = 0;
+let isRendering = false;
+let loadedCount = 0;
+let loadedTarget = 0;
+let audioObjects = new Map();
+let stats = loadJSON(STATS_KEY, { totalPlays: 0, totalSeconds: 0, playCounts: {}, lastPlayed: null });
+let settings = loadJSON(SETTINGS_KEY, {
+    theme: 'light',
+    volume: 80,
+    selectedCategory: 'Semua',
+    selectedFolder: 'Semua',
+    search: '',
+    mixMode: false,
+    queueMode: true,
+    autoNext: true,
+    showFavorites: true
+});
+let history = loadJSON(HISTORY_KEY, []);
+let categories = ['Semua'];
+let folders = ['Semua'];
 
-const audioList = [];
+function loadJSON(key, fallback){
+    try{
+        const raw = localStorage.getItem(key);
+        if(!raw) return fallback;
+        return Object.assign(Array.isArray(fallback) ? [] : {}, fallback, JSON.parse(raw));
+    }catch(e){
+        return fallback;
+    }
+}
+function saveJSON(key, value){
+    localStorage.setItem(key, JSON.stringify(value));
+}
+function uid(){
+    return 'snd-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,8);
+}
+function escapeHTML(s){
+    return String(s ?? '')
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'","&#39;");
+}
+function formatTime(sec){
+    if(!isFinite(sec) || isNaN(sec) || sec < 0) return '00:00';
+    const m = Math.floor(sec/60);
+    const s = Math.floor(sec%60);
+    return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+function buildTags(arr){
+    if(!Array.isArray(arr)) return [];
+    return arr.map(x => String(x).trim()).filter(Boolean).slice(0,10);
+}
+function normalSound(input){
+    const now = Date.now();
+    return {
+        id: input.id || uid(),
+        title: input.title || 'Audio Custom',
+        url: input.url || '',
+        category: input.category || 'Lainnya',
+        tags: buildTags(input.tags || []),
+        folder: input.folder || 'Default',
+        favorite: !!input.favorite,
+        locked: !!input.locked,
+        loop: !!input.loop,
+        plays: Number(input.plays || 0),
+        duration: Number(input.duration || 0),
+        mime: input.mime || '',
+        source: input.source || 'custom',
+        createdAt: Number(input.createdAt || now),
+        updatedAt: Number(input.updatedAt || now),
+        lastPlayedAt: Number(input.lastPlayedAt || 0)
+    };
+}
+function getDB(){
+    return new Promise((resolve, reject)=>{
+        const req = indexedDB.open(DB_NAME, DB_VERSION);
+        req.onupgradeneeded = (e)=>{
+            const db = e.target.result;
+            if(!db.objectStoreNames.contains(STORE)){
+                db.createObjectStore(STORE, { keyPath: 'id' });
+            }
+        };
+        req.onsuccess = ()=>resolve(req.result);
+        req.onerror = ()=>reject(req.error);
+    });
+}
+function txStore(mode='readonly'){
+    const tx = db.transaction(STORE, mode);
+    return tx.objectStore(STORE);
+}
+function getAllSounds(){
+    return new Promise((resolve, reject)=>{
+        const req = txStore('readonly').getAll();
+        req.onsuccess = ()=>resolve(req.result || []);
+        req.onerror = ()=>reject(req.error);
+    });
+}
+function putSound(sound){
+    return new Promise((resolve, reject)=>{
+        const req = txStore('readwrite').put(normalSound(sound));
+        req.onsuccess = ()=>resolve(req.result);
+        req.onerror = ()=>reject(req.error);
+    });
+}
+function deleteSound(id){
+    return new Promise((resolve, reject)=>{
+        const req = txStore('readwrite').delete(id);
+        req.onsuccess = ()=>resolve();
+        req.onerror = ()=>reject(req.error);
+    });
+}
+function getSound(id){
+    return new Promise((resolve, reject)=>{
+        const req = txStore('readonly').get(id);
+        req.onsuccess = ()=>resolve(req.result || null);
+        req.onerror = ()=>reject(req.error);
+    });
+}
+async function ensureDefaults(){
+    for(const def of DEFAULT_SOUNDS){
+        const existing = await getSound(def.id);
+        if(!existing){
+            await putSound(def);
+        }
+    }
+}
+function updateProgress(){
+    if(!loadedTarget){
+        els.progressBar.style.width = '100%';
+        els.loadingText.textContent = 'Siap';
+        return;
+    }
+    const pct = Math.min(100, Math.round((loadedCount / loadedTarget) * 100));
+    els.progressBar.style.width = pct + '%';
+    els.loadingText.textContent = `${loadedCount}/${loadedTarget} audio siap`;
+}
+function showApp(){
+    els.loader.style.display = 'none';
+    els.app.style.display = 'block';
+}
+function setTheme(theme){
+    settings.theme = theme === 'dark' ? 'dark' : 'light';
+    els.root.setAttribute('data-theme', settings.theme);
+    els.themeToggle.textContent = settings.theme === 'dark' ? '☀️ Tema' : '🌙 Tema';
+    saveJSON(SETTINGS_KEY, settings);
+}
+function allSoundsLoaded(list){
+    loadedTarget = list.length;
+    loadedCount = 0;
+    updateProgress();
+    list.forEach(sound=>{
+        preloadSound(sound).finally(()=>{
+            loadedCount++;
+            updateProgress();
+            if(loadedCount >= loadedTarget){
+                setTimeout(showApp, 350);
+            }
+        });
+    });
+}
+function preloadSound(sound){
+    return new Promise(resolve=>{
+        try{
+            const audio = new Audio();
+            audio.preload = 'auto';
+            audio.src = sound.url;
+            const cleanup = ()=>{
+                audio.removeEventListener('canplaythrough', done);
+                audio.removeEventListener('loadedmetadata', done);
+                audio.removeEventListener('error', done);
+            };
+            const done = ()=>{
+                cleanup();
+                resolve();
+            };
+            audio.addEventListener('canplaythrough', done, { once:true });
+            audio.addEventListener('loadedmetadata', done, { once:true });
+            audio.addEventListener('error', done, { once:true });
+            setTimeout(done, 1200);
+        }catch(e){
+            resolve();
+        }
+    });
+}
+function getAudio(id, url){
+    if(audioObjects.has(id)) return audioObjects.get(id);
+    const a = new Audio(url);
+    a.preload = 'auto';
+    a.volume = settings.volume / 100;
+    audioObjects.set(id, a);
+    return a;
+}
+function stopOtherAudios(exceptId){
+    if(settings.mixMode) return;
+    for(const [id, audio] of audioObjects.entries()){
+        if(id !== exceptId){
+            try{ audio.pause(); }catch(e){}
+        }
+    }
+}
+function fadeOutAudio(audio, cb){
+    let v = Number(audio.volume);
+    const step = ()=> {
+        v -= 0.06;
+        if(v <= 0){
+            try{ audio.pause(); audio.currentTime = 0; }catch(e){}
+            audio.volume = settings.volume / 100;
+            if(cb) cb();
+        }else{
+            audio.volume = v;
+            setTimeout(step, 35);
+        }
+    };
+    step();
+}
+function setCardActive(id, active){
+    const card = document.querySelector(`.es-card[data-id="${CSS.escape(id)}"]`);
+    if(!card) return;
+    card.classList.toggle('active', !!active);
+    if(active) card.classList.add('playing');
+    else card.classList.remove('playing');
+}
+function logHistory(sound){
+    history = history.filter(x => x.id !== sound.id);
+    history.unshift({
+        id: sound.id,
+        title: sound.title,
+        at: Date.now(),
+        category: sound.category || 'Lainnya'
+    });
+    history = history.slice(0,10);
+    saveJSON(HISTORY_KEY, history);
+}
+async function playSound(sound, fromQueue=false){
+    if(!sound || !sound.url) return;
+    const audio = getAudio(sound.id, sound.url);
+    stopOtherAudios(sound.id);
 
-sounds.forEach(sound=>{
+    const card = document.querySelector(`.es-card[data-id="${CSS.escape(sound.id)}"]`);
+    if(card){
+        currentCardId = sound.id;
+        document.querySelectorAll('.es-card').forEach(c=>c.classList.remove('active'));
+        card.classList.add('active');
+        card.classList.add('playing');
+        card.querySelector('.es-status').textContent = '🟢 Sedang diputar';
+    }
 
-    const audio = new Audio(sound.url);
-    audio.preload = "auto";
-    audio.volume = .8;
+    audio.volume = settings.volume / 100;
+    audio.loop = !!sound.loop;
+    try{
+        audio.currentTime = audio.currentTime || 0;
+    }catch(e){}
 
-    audioList.push(audio);
+    try{
+        await audio.play();
+    }catch(err){
+        if(card) card.querySelector('.es-status').textContent = 'Gagal memutar audio';
+        return;
+    }
 
-    const card = document.createElement("div");
-    card.className = "es-card";
+    const updated = normalSound(Object.assign({}, sound, {
+        plays: Number(sound.plays || 0) + 1,
+        lastPlayedAt: Date.now(),
+        updatedAt: Date.now()
+    }));
+    if(!sound.locked){
+        await putSound(updated);
+    }else{
+        await putSound(Object.assign({}, sound, {
+            plays: updated.plays,
+            lastPlayedAt: updated.lastPlayedAt,
+            updatedAt: updated.updatedAt
+        }));
+    }
+    stats.totalPlays += 1;
+    stats.playCounts[sound.id] = (stats.playCounts[sound.id] || 0) + 1;
+    stats.lastPlayed = sound.id;
+    saveJSON(STATS_KEY, stats);
+    logHistory(sound);
+    refreshStats();
 
+    audio.onended = async ()=>{
+        setCardActive(sound.id, false);
+        const fresh = await getSound(sound.id);
+        if(fresh){
+            fresh.updatedAt = Date.now();
+            await putSound(fresh);
+        }
+        if(currentQueue.length && !settings.mixMode){
+            if(settings.autoNext){
+                queueIndex++;
+                if(queueIndex < currentQueue.length){
+                    playSound(currentQueue[queueIndex], true);
+                }else{
+                    currentQueue = [];
+                    queueIndex = 0;
+                    renderQueue();
+                }
+            }
+        }
+    };
+
+    if(card){
+        attachCardAudioEvents(card, audio, sound);
+    }
+    renderFavList();
+    renderHistory();
+    renderStats();
+}
+function pauseSound(sound){
+    const audio = getAudio(sound.id, sound.url);
+    audio.pause();
+    setCardActive(sound.id, false);
+    const card = document.querySelector(`.es-card[data-id="${CSS.escape(sound.id)}"]`);
+    if(card) card.querySelector('.es-status').textContent = 'Dihentikan';
+}
+function stopAllSounds(){
+    for(const [id, audio] of audioObjects.entries()){
+        try{
+            audio.pause();
+            audio.currentTime = 0;
+        }catch(e){}
+        setCardActive(id, false);
+    }
+    document.querySelectorAll('.es-status').forEach(el=>el.textContent='Dihentikan');
+}
+function refreshStats(){
+    const sounds = window.__allSounds || [];
+    els.statTotal.textContent = String(sounds.length);
+    els.statFav.textContent = String(sounds.filter(s=>s.favorite).length);
+    els.statPlay.textContent = String(stats.totalPlays || 0);
+    els.statMin.textContent = String(Math.floor((stats.totalSeconds || 0) / 60));
+}
+function renderCategoryChips(all){
+    const cats = ['Semua', ...new Set(all.map(s => s.category || 'Lainnya'))];
+    categories = cats;
+    els.categoryChips.innerHTML = cats.map(cat => `
+        <button class="es-chip ${settings.selectedCategory === cat ? 'active' : ''}" data-cat="${escapeHTML(cat)}">${escapeHTML(cat)}</button>
+    `).join('');
+    els.categoryChips.querySelectorAll('.es-chip').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+            settings.selectedCategory = btn.dataset.cat;
+            saveJSON(SETTINGS_KEY, settings);
+            renderAll();
+        });
+    });
+    els.categoryFilter.innerHTML = cats.map(cat => `<option value="${escapeHTML(cat)}">${escapeHTML(cat)}</option>`).join('');
+    els.categoryFilter.value = settings.selectedCategory || 'Semua';
+}
+function renderFolderFilter(all){
+    const fs = ['Semua', ...new Set(all.map(s => s.folder || 'Default'))];
+    folders = fs;
+    els.folderFilter.innerHTML = fs.map(f => `<option value="${escapeHTML(f)}">${escapeHTML(f)}</option>`).join('');
+    els.folderFilter.value = settings.selectedFolder || 'Semua';
+}
+function renderFavList(){
+    const sounds = (window.__allSounds || []).filter(s => s.favorite).slice(0,12);
+    if(!settings.showFavorites){
+        els.favList.innerHTML = '<div class="es-subtle">Favorit disembunyikan.</div>';
+        return;
+    }
+    if(!sounds.length){
+        els.favList.innerHTML = '<div class="es-subtle">Belum ada favorit.</div>';
+        return;
+    }
+    els.favList.innerHTML = sounds.map(s => `
+        <div class="es-fav-item">
+            <div class="meta">
+                <strong>${escapeHTML(s.title)}</strong>
+                <small>${escapeHTML(s.category || 'Lainnya')} • ${escapeHTML(s.folder || 'Default')}</small>
+            </div>
+            <button class="es-btn es-btn-primary" data-play="${escapeHTML(s.id)}">▶</button>
+        </div>
+    `).join('');
+    els.favList.querySelectorAll('[data-play]').forEach(btn=>{
+        btn.addEventListener('click', async ()=>{
+            const s = await getSound(btn.dataset.play);
+            if(s) playSound(s);
+        });
+    });
+}
+function renderHistory(){
+    if(!history.length){
+        els.historyList.innerHTML = '<div class="es-subtle">Belum ada riwayat.</div>';
+        return;
+    }
+    els.historyList.innerHTML = history.map(h => `
+        <div class="es-history-item">
+            <div class="meta">
+                <strong>${escapeHTML(h.title)}</strong>
+                <small>${escapeHTML(h.category)} • ${new Date(h.at).toLocaleString('id-ID')}</small>
+            </div>
+        </div>
+    `).join('');
+}
+function renderQueue(){
+    if(!currentQueue.length){
+        els.queueList.innerHTML = '<div class="es-subtle">Queue kosong.</div>';
+        return;
+    }
+    els.queueList.innerHTML = currentQueue.map((s, idx) => `
+        <div class="es-queue-item">
+            <div class="meta">
+                <strong>${idx+1}. ${escapeHTML(s.title)}</strong>
+                <small>${escapeHTML(s.category || 'Lainnya')} • ${escapeHTML(s.folder || 'Default')}</small>
+            </div>
+            <button class="es-btn" data-remove="${escapeHTML(s.id)}">Hapus</button>
+        </div>
+    `).join('');
+    els.queueList.querySelectorAll('[data-remove]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+            currentQueue = currentQueue.filter(x => x.id !== btn.dataset.remove);
+            renderQueue();
+        });
+    });
+}
+function renderFolderList(all){
+    const byFolder = {};
+    for(const s of all){
+        const f = s.folder || 'Default';
+        byFolder[f] = byFolder[f] || [];
+        byFolder[f].push(s);
+    }
+    const names = Object.keys(byFolder);
+    if(!names.length){
+        els.folderList.innerHTML = '<div class="es-subtle">Belum ada folder.</div>';
+        return;
+    }
+    els.folderList.innerHTML = names.map(name => `
+        <div class="es-folder-item">
+            <div class="meta">
+                <strong>${escapeHTML(name)}</strong>
+                <small>${byFolder[name].length} audio</small>
+            </div>
+            <button class="es-btn" data-folder="${escapeHTML(name)}">Filter</button>
+        </div>
+    `).join('');
+    els.folderList.querySelectorAll('[data-folder]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+            settings.selectedFolder = btn.dataset.folder;
+            saveJSON(SETTINGS_KEY, settings);
+            renderAll();
+        });
+    });
+}
+function renderStats(){
+    refreshStats();
+}
+function parseSearchTokens(str){
+    return String(str || '').toLowerCase().trim();
+}
+function matchesFilters(sound){
+    const q = parseSearchTokens(settings.search || '');
+    const cat = settings.selectedCategory || 'Semua';
+    const folder = settings.selectedFolder || 'Semua';
+    const hay = [
+        sound.title,
+        sound.category,
+        sound.folder,
+        ...(sound.tags || [])
+    ].join(' ').toLowerCase();
+    const okSearch = !q || hay.includes(q);
+    const okCat = cat === 'Semua' || (sound.category || 'Lainnya') === cat;
+    const okFolder = folder === 'Semua' || (sound.folder || 'Default') === folder;
+    return okSearch && okCat && okFolder;
+}
+function attachCardAudioEvents(card, audio, sound){
+    const current = card.querySelector('.current');
+    const duration = card.querySelector('.duration');
+    const seek = card.querySelector('.es-seek');
+    const status = card.querySelector('.es-status');
+
+    const updateDur = ()=>{ duration.textContent = formatTime(audio.duration); };
+    const updateTime = ()=>{
+        current.textContent = formatTime(audio.currentTime);
+        if(audio.duration) seek.value = Math.round((audio.currentTime / audio.duration) * 100);
+    };
+    audio.onloadedmetadata = updateDur;
+    audio.ontimeupdate = updateTime;
+    audio.onended = ()=>{
+        card.classList.remove('active','playing');
+        status.textContent = 'Selesai';
+        if(settings.queueMode && currentQueue.length && settings.autoNext){
+            if(queueIndex < currentQueue.length - 1){
+                queueIndex++;
+                const next = currentQueue[queueIndex];
+                if(next) playSound(next, true);
+            }
+        }
+    };
+    seek.oninput = ()=>{
+        if(audio.duration){
+            audio.currentTime = (seek.value / 100) * audio.duration;
+        }
+    };
+}
+function createCard(sound){
+    const card = document.createElement('div');
+    card.className = 'es-card';
+    if(sound.favorite) card.classList.add('favorite');
+    card.dataset.id = sound.id;
+
+    const tags = (sound.tags || []).slice(0,4).map(t => `<span class="es-tag">#${escapeHTML(t)}</span>`).join('');
     card.innerHTML = `
-        <div class="es-title">${sound.title}</div>
-
-        <div class="es-status">
-            Siap dimainkan
+        <div class="es-wave"></div>
+        <h3 class="es-title">${escapeHTML(sound.title)}</h3>
+        <div class="es-meta">
+            <span class="es-tag">${escapeHTML(sound.category || 'Lainnya')}</span>
+            <span class="es-tag">${escapeHTML(sound.folder || 'Default')}</span>
+            ${tags}
         </div>
-
+        <div class="es-status">${sound.locked ? 'Siap dimainkan' : 'Siap dimainkan (custom)'}</div>
         <div class="es-buttons">
-            <button class="es-btn es-play">
-                ▶ PLAY
-            </button>
-
-            <button class="es-btn es-stop">
-                ⏹ STOP
-            </button>
+            <button class="es-btn es-btn-primary es-play">▶ PLAY</button>
+            <button class="es-btn es-stop">⏹ STOP</button>
+            <button class="es-btn es-fav">${sound.favorite ? '★ Favorit' : '☆ Favorit'}</button>
+            <button class="es-btn es-queue">➕ Queue</button>
+            <button class="es-btn es-loop">${sound.loop ? 'Loop ✓' : 'Loop'}</button>
+            <button class="es-btn es-edit">✏ Edit</button>
+            ${sound.locked ? '' : '<button class="es-btn es-btn-danger es-delete">🗑 Hapus</button>'}
         </div>
-
-        <input
-            type="range"
-            class="es-seek"
-            min="0"
-            max="100"
-            value="0">
-
+        <input type="range" class="es-seek" min="0" max="100" value="0">
         <div class="es-time">
             <span class="current">00:00</span>
-            <span class="duration">00:00</span>
+            <span class="duration">${formatTime(sound.duration || 0)}</span>
+        </div>
+        <div class="es-mini">
+            <button class="es-btn es-addfav">⭐ Quick Fav</button>
+            <button class="es-btn es-playnext">⏭ Play Next</button>
         </div>
     `;
 
-    grid.appendChild(card);
+    const status = card.querySelector('.es-status');
+    const playBtn = card.querySelector('.es-play');
+    const stopBtn = card.querySelector('.es-stop');
+    const favBtn = card.querySelector('.es-fav');
+    const queueBtn = card.querySelector('.es-queue');
+    const loopBtn = card.querySelector('.es-loop');
+    const editBtn = card.querySelector('.es-edit');
+    const deleteBtn = card.querySelector('.es-delete');
+    const quickFavBtn = card.querySelector('.es-addfav');
+    const playNextBtn = card.querySelector('.es-playnext');
 
-    const playBtn = card.querySelector(".es-play");
-    const stopBtn = card.querySelector(".es-stop");
-    const seek = card.querySelector(".es-seek");
-    const current = card.querySelector(".current");
-    const duration = card.querySelector(".duration");
-    const status = card.querySelector(".es-status");
+    const audio = getAudio(sound.id, sound.url);
+    audio.volume = settings.volume / 100;
+    audio.loop = !!sound.loop;
 
-    audio.addEventListener("loadedmetadata",()=>{
-        duration.textContent =
-        format(audio.duration);
+    audio.addEventListener('loadedmetadata', ()=> {
+        if(card.querySelector('.duration')) card.querySelector('.duration').textContent = formatTime(audio.duration);
+    }, { once:false });
+
+    playBtn.addEventListener('click', ()=>playSound(sound));
+    stopBtn.addEventListener('click', ()=>{
+        fadeOutAudio(audio, ()=>{});
+        status.textContent = 'Dihentikan';
+        card.classList.remove('active','playing');
     });
 
-    audio.addEventListener("timeupdate",()=>{
+    favBtn.addEventListener('click', async ()=>{
+        sound.favorite = !sound.favorite;
+        sound.updatedAt = Date.now();
+        await putSound(sound);
+        renderAll();
+    });
 
-        current.textContent =
-        format(audio.currentTime);
+    quickFavBtn.addEventListener('click', async ()=>{
+        sound.favorite = true;
+        sound.updatedAt = Date.now();
+        await putSound(sound);
+        renderAll();
+    });
 
-        if(audio.duration){
-            seek.value =
-            (audio.currentTime/audio.duration)*100;
+    queueBtn.addEventListener('click', ()=>{
+        if(!currentQueue.find(x => x.id === sound.id)){
+            currentQueue.push(sound);
+            renderQueue();
         }
-
     });
 
-    audio.addEventListener("ended",()=>{
-        card.classList.remove("active");
-        status.textContent =
-        "Selesai";
+    loopBtn.addEventListener('click', async ()=>{
+        sound.loop = !sound.loop;
+        sound.updatedAt = Date.now();
+        await putSound(sound);
+        renderAll();
     });
 
-    seek.addEventListener("input",()=>{
-
-        if(audio.duration){
-            audio.currentTime =
-            (seek.value/100)*audio.duration;
-        }
-
+    playNextBtn.addEventListener('click', ()=>{
+        currentQueue = [sound, ...currentQueue.filter(x => x.id !== sound.id)];
+        queueIndex = 0;
+        renderQueue();
+        playSound(sound);
     });
 
-    playBtn.addEventListener("click",()=>{
+    editBtn.addEventListener('click', async ()=>{
+        const title = prompt('Judul audio', sound.title);
+        if(title === null) return;
+        const category = prompt('Kategori', sound.category || 'Lainnya');
+        if(category === null) return;
+        const folder = prompt('Folder/Koleksi', sound.folder || 'Default');
+        if(folder === null) return;
+        const tags = prompt('Tag dipisah koma', (sound.tags || []).join(', '));
+        if(tags === null) return;
+        sound.title = title.trim() || sound.title;
+        sound.category = category.trim() || sound.category;
+        sound.folder = folder.trim() || sound.folder;
+        sound.tags = buildTags(tags.split(','));
+        sound.updatedAt = Date.now();
+        await putSound(sound);
+        renderAll();
+    });
 
-        if(currentAudio && currentAudio !== audio){
-            fadeOut(currentAudio);
-
-            if(currentCard){
-                currentCard.classList.remove("active");
+    if(deleteBtn){
+        deleteBtn.addEventListener('click', async ()=>{
+            if(sound.locked){
+                alert('Default audio dikunci dan tidak bisa dihapus.');
+                return;
             }
-        }
-
-        currentAudio = audio;
-        currentCard = card;
-
-        card.classList.add("active");
-
-        status.textContent =
-        "🟢 Sedang diputar";
-
-        audio.volume =
-        document
-        .getElementById("es-master-volume")
-        .value / 100;
-
-        audio.play();
-
-    });
-
-    stopBtn.addEventListener("click",()=>{
-
-        audio.pause();
-        audio.currentTime = 0;
-
-        card.classList.remove("active");
-
-        status.textContent =
-        "Dihentikan";
-
-    });
-
-    audio.addEventListener(
-        "canplaythrough",
-        ()=>{
-            loaded++;
-
-            const percent =
-            loaded/sounds.length*100;
-
-            document
-            .getElementById("es-progress-bar")
-            .style.width =
-            percent+"%";
-
-            document
-            .getElementById("es-loading-text")
-            .innerText =
-            `${loaded}/${sounds.length} audio siap`;
-
-            if(loaded === sounds.length){
-
-                setTimeout(()=>{
-
-                    document
-                    .getElementById("es-loader")
-                    .style.display="none";
-
-                    document
-                    .getElementById("es-app")
-                    .style.display="block";
-
-                },500);
-
+            if(confirm(`Hapus "${sound.title}"?`)){
+                await deleteSound(sound.id);
+                audioObjects.delete(sound.id);
+                renderAll();
             }
-        },
-        {once:true}
-    );
+        });
+    }
 
-});
+    card.addEventListener('dblclick', ()=>playSound(sound));
 
-document
-.getElementById("es-master-volume")
-.addEventListener("input",function(){
-
-    const vol = this.value/100;
-
-    audioList.forEach(a=>{
-        a.volume = vol;
+    card.querySelector('.es-seek').addEventListener('input', ()=>{
+        if(audio.duration){
+            audio.currentTime = (card.querySelector('.es-seek').value / 100) * audio.duration;
+        }
     });
 
-});
+    card.querySelector('.es-seek').value = 0;
+    return card;
+}
+async function renderAll(){
+    if(isRendering) return;
+    isRendering = true;
+    try{
+        const all = await getAllSounds();
+        const merged = [];
+        const map = new Map();
+        for(const s of DEFAULT_SOUNDS){
+            map.set(s.id, normalSound(s));
+        }
+        for(const s of all){
+            map.set(s.id, normalSound(s));
+        }
+        for(const v of map.values()) merged.push(v);
+        merged.sort((a,b)=> (b.favorite - a.favorite) || (b.createdAt - a.createdAt));
+        window.__allSounds = merged;
 
-document
-.getElementById("es-stop-all")
-.addEventListener("click",()=>{
+        renderCategoryChips(merged);
+        renderFolderFilter(merged);
+        renderFavList();
+        renderFolderList(merged);
+        renderHistory();
+        renderQueue();
+        renderStats();
 
-    audioList.forEach(a=>{
-
-        a.pause();
-        a.currentTime = 0;
-
-    });
-
-    document
-    .querySelectorAll(".es-card")
-    .forEach(card=>{
-
-        card.classList.remove("active");
-
-        card.querySelector(".es-status")
-        .textContent =
-        "Dihentikan";
-
-    });
-
-});
-
-function fadeOut(audio){
-
-    let v = audio.volume;
-
-    const i = setInterval(()=>{
-
-        v -= 0.05;
-
-        if(v <= 0){
-
-            clearInterval(i);
-
-            audio.pause();
-            audio.currentTime = 0;
-
-            audio.volume =
-            document
-            .getElementById("es-master-volume")
-            .value/100;
-
+        const filtered = merged.filter(matchesFilters);
+        els.libraryCount.textContent = `${filtered.length} item`;
+        els.grid.innerHTML = '';
+        if(!filtered.length){
+            els.grid.innerHTML = '<div class="es-subtle">Tidak ada audio yang cocok dengan filter.</div>';
         }else{
-
-            audio.volume = v;
-
+            filtered.forEach(sound=>{
+                const card = createCard(sound);
+                els.grid.appendChild(card);
+            });
         }
-
-    },40);
-
+        settings.volume = Number(els.master.value || settings.volume || 80);
+        saveJSON(SETTINGS_KEY, settings);
+        els.root.dataset.theme = settings.theme;
+    }finally{
+        isRendering = false;
+    }
 }
-
-function format(sec){
-
-    if(isNaN(sec))
-        return "00:00";
-
-    const m =
-    Math.floor(sec/60);
-
-    const s =
-    Math.floor(sec%60);
-
-    return String(m)
-    .padStart(2,"0")
-    + ":" +
-    String(s)
-    .padStart(2,"0");
-
+function applySettingsToUI(){
+    els.master.value = settings.volume;
+    els.search.value = settings.search || '';
+    els.folderFilter.value = settings.selectedFolder || 'Semua';
+    els.categoryFilter.value = settings.selectedCategory || 'Semua';
+    els.mixMode.checked = !!settings.mixMode;
+    els.queueMode.checked = !!settings.queueMode;
+    els.autoNext.checked = !!settings.autoNext;
+    els.showFavorites.checked = !!settings.showFavorites;
+    setTheme(settings.theme || 'light');
 }
+function buildExportPayload(sounds){
+    return {
+        version: 3,
+        exportedAt: new Date().toISOString(),
+        settings,
+        stats,
+        history,
+        sounds
+    };
+}
+async function exportBackup(){
+    const sounds = await getAllSounds();
+    const payload = buildExportPayload(sounds.map(s => normalSound(s)));
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type:'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'event-soundboard-v3-backup.json';
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+}
+async function importBackup(file){
+    const text = await file.text();
+    const data = JSON.parse(text);
+    const imported = Array.isArray(data.sounds) ? data.sounds : [];
+    for(const s of imported){
+        const sound = normalSound(s);
+        if(!sound.id) sound.id = uid();
+        await putSound(sound);
+    }
+    if(data.settings){
+        settings = Object.assign(settings, data.settings);
+    }
+    if(data.stats){
+        stats = Object.assign(stats, data.stats);
+    }
+    if(Array.isArray(data.history)){
+        history = data.history.slice(0,10);
+    }
+    saveJSON(SETTINGS_KEY, settings);
+    saveJSON(STATS_KEY, stats);
+    saveJSON(HISTORY_KEY, history);
+    applySettingsToUI();
+    await renderAll();
+}
+function addTagsFromInput(){
+    return buildTags(els.newTags.value.split(','));
+}
+async function addUrlSound(){
+    const title = els.newTitle.value.trim() || 'Audio Custom';
+    const url = els.newUrl.value.trim();
+    if(!url){
+        alert('URL audio belum diisi.');
+        return;
+    }
+    const sound = normalSound({
+        title,
+        url,
+        category: els.newCategory.value || 'Lainnya',
+        tags: addTagsFromInput(),
+        folder: els.newFolder.value.trim() || 'Default',
+        favorite: false,
+        locked: false,
+        loop: false,
+        source: 'url'
+    });
+    await putSound(sound);
+    clearFields(false);
+    await renderAll();
+}
+function clearFields(all=true){
+    els.newTitle.value = '';
+    els.newUrl.value = '';
+    els.newTags.value = '';
+    els.newFolder.value = '';
+    els.newCategory.value = 'Opening';
+    if(all){
+        els.search.value = '';
+        settings.search = '';
+        saveJSON(SETTINGS_KEY, settings);
+    }
+}
+async function fileToDataURL(file){
+    return new Promise((resolve, reject)=>{
+        const fr = new FileReader();
+        fr.onload = ()=>resolve(fr.result);
+        fr.onerror = ()=>reject(fr.error);
+        fr.readAsDataURL(file);
+    });
+}
+async function addFiles(files){
+    for(const file of files){
+        const dataURL = await fileToDataURL(file);
+        const sound = normalSound({
+            title: file.name.replace(/\.[^.]+$/, ''),
+            url: dataURL,
+            category: 'Lainnya',
+            tags: ['upload'],
+            folder: 'Upload',
+            favorite: false,
+            locked: false,
+            loop: false,
+            mime: file.type,
+            source: 'upload'
+        });
+        await putSound(sound);
+    }
+    await renderAll();
+}
+function handleDrop(ev){
+    ev.preventDefault();
+    ev.stopPropagation();
+    if(ev.dataTransfer?.files?.length){
+        addFiles(ev.dataTransfer.files);
+    }
+}
+function registerToolbarEvents(){
+    els.master.addEventListener('input', ()=>{
+        settings.volume = Number(els.master.value);
+        saveJSON(SETTINGS_KEY, settings);
+        for(const a of audioObjects.values()){
+            a.volume = settings.volume / 100;
+        }
+    });
+    els.search.addEventListener('input', ()=>{
+        settings.search = els.search.value;
+        saveJSON(SETTINGS_KEY, settings);
+        renderAll();
+    });
+    els.folderFilter.addEventListener('change', ()=>{
+        settings.selectedFolder = els.folderFilter.value;
+        saveJSON(SETTINGS_KEY, settings);
+        renderAll();
+    });
+    els.categoryFilter.addEventListener('change', ()=>{
+        settings.selectedCategory = els.categoryFilter.value;
+        saveJSON(SETTINGS_KEY, settings);
+        renderAll();
+    });
+    els.stopAll.addEventListener('click', ()=>{
+        stopAllSounds();
+        currentQueue = [];
+        queueIndex = 0;
+        renderQueue();
+    });
+    els.themeToggle.addEventListener('click', ()=>{
+        setTheme(settings.theme === 'dark' ? 'light' : 'dark');
+    });
+    els.exportBtn.addEventListener('click', exportBackup);
+    els.importBtn.addEventListener('change', async ()=>{
+        const file = els.importBtn.files && els.importBtn.files[0];
+        if(file) await importBackup(file);
+        els.importBtn.value = '';
+    });
+    els.addUrl.addEventListener('click', addUrlSound);
+    els.clearFields.addEventListener('click', ()=>clearFields(true));
+    els.fileInput.addEventListener('change', async ()=>{
+        if(els.fileInput.files && els.fileInput.files.length){
+            await addFiles(els.fileInput.files);
+        }
+        els.fileInput.value = '';
+    });
+    els.playQueue.addEventListener('click', ()=>{
+        if(!currentQueue.length) return;
+        queueIndex = 0;
+        settings.queueMode = true;
+        els.queueMode.checked = true;
+        playSound(currentQueue[0], true);
+    });
+    els.clearQueue.addEventListener('click', ()=>{
+        currentQueue = [];
+        queueIndex = 0;
+        renderQueue();
+    });
+    els.mixMode.addEventListener('change', ()=>{
+        settings.mixMode = els.mixMode.checked;
+        saveJSON(SETTINGS_KEY, settings);
+    });
+    els.queueMode.addEventListener('change', ()=>{
+        settings.queueMode = els.queueMode.checked;
+        saveJSON(SETTINGS_KEY, settings);
+    });
+    els.autoNext.addEventListener('change', ()=>{
+        settings.autoNext = els.autoNext.checked;
+        saveJSON(SETTINGS_KEY, settings);
+    });
+    els.showFavorites.addEventListener('change', ()=>{
+        settings.showFavorites = els.showFavorites.checked;
+        saveJSON(SETTINGS_KEY, settings);
+        renderFavList();
+    });
+
+    els.drop.addEventListener('dragover', e=>{ e.preventDefault(); });
+    els.drop.addEventListener('drop', handleDrop);
+    els.drop.addEventListener('click', ()=> els.fileInput.click());
+
+    document.addEventListener('keydown', async (e)=>{
+        if(e.target && ['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
+        if(e.key === '/'){
+            e.preventDefault();
+            els.search.focus();
+            return;
+        }
+        if(e.key.toLowerCase() === 'd'){
+            setTheme(settings.theme === 'dark' ? 'light' : 'dark');
+            return;
+        }
+        if(e.key.toLowerCase() === 's'){
+            stopAllSounds();
+            return;
+        }
+        if(e.key.toLowerCase() === 'q'){
+            els.queueMode.checked = !els.queueMode.checked;
+            settings.queueMode = els.queueMode.checked;
+            saveJSON(SETTINGS_KEY, settings);
+            return;
+        }
+        if(e.key === ' '){
+            e.preventDefault();
+            if(currentCardId){
+                const s = await getSound(currentCardId);
+                if(s){
+                    const a = getAudio(s.id, s.url);
+                    if(a.paused) playSound(s);
+                    else a.pause();
+                }
+            }
+            return;
+        }
+        const n = Number(e.key);
+        if(Number.isInteger(n) && n >= 1 && n <= 9){
+            const favorites = (window.__allSounds || []).filter(s => s.favorite || s.locked).slice(0,9);
+            const target = favorites[n-1];
+            if(target) playSound(target);
+        }
+    });
+}
+async function init(){
+    try{
+        db = await getDB();
+        await ensureDefaults();
+        applySettingsToUI();
+        registerToolbarEvents();
+        const all = await getAllSounds();
+        const merged = [...DEFAULT_SOUNDS.map(normalSound), ...all.map(normalSound)];
+        const unique = new Map();
+        merged.forEach(s => unique.set(s.id, s));
+        const list = Array.from(unique.values());
+        allSoundsLoaded(list);
+        await renderAll();
+    }catch(err){
+        els.loadingText.textContent = 'Gagal memuat soundboard. Coba muat ulang halaman.';
+        els.progressBar.style.width = '100%';
+        console.error(err);
+    }
+}
+window.addEventListener('beforeunload', ()=>{
+    saveJSON(SETTINGS_KEY, settings);
+    saveJSON(STATS_KEY, stats);
+    saveJSON(HISTORY_KEY, history);
+});
+init();
 
 })();
 </script>
-
 </div>
