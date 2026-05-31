@@ -8,14 +8,14 @@
 :root{
     --primary:#ff5f1f;
     --primary-hover:#e65117;
-    --bg:#f7f8fa;
+    --bg:#f4f6f9;
     --panel:#ffffff;
     --card:#ffffff;
     --text:#1f2937;
     --muted:#6b7280;
     --border:#e5e7eb;
-    --shadow:0 10px 30px rgba(0,0,0,.08);
-    --shadow-soft:0 6px 18px rgba(0,0,0,.06);
+    --shadow:0 10px 25px rgba(0,0,0,.05);
+    --shadow-soft:0 4px 12px rgba(0,0,0,.04);
     --danger:#dc2626;
     --success:#16a34a;
     --warning:#d97706;
@@ -26,16 +26,16 @@
 }
 
 #event-soundboard[data-theme="dark"]{
-    --bg:#0b1220;
-    --panel:#111827;
-    --card:#111827;
-    --text:#e5e7eb;
+    --bg:#0f172a;
+    --panel:#1e293b;
+    --card:#1e293b;
+    --text:#f3f4f6;
     --muted:#9ca3af;
-    --border:#243041;
-    --shadow:0 12px 30px rgba(0,0,0,.35);
-    --shadow-soft:0 6px 18px rgba(0,0,0,.22);
-    --chip:#1f2937;
-    --chipText:#d1d5db;
+    --border:#334155;
+    --shadow:0 12px 30px rgba(0,0,0,.25);
+    --shadow-soft:0 6px 18px rgba(0,0,0,.15);
+    --chip:#334155;
+    --chipText:#e2e8f0;
     --inputBg:#0f172a;
 }
 
@@ -44,9 +44,9 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:
 button,input,select,textarea{font:inherit}
 button,input,select{outline:none}
 #event-soundboard{
-    max-width:1500px;
+    max-width:1600px;
     margin:0 auto;
-    padding:16px;
+    padding:20px;
     position:relative;
 }
 
@@ -104,35 +104,35 @@ button,input,select{outline:none}
 .es-app{display:none}
 .es-top{
     display:flex;
-    gap:14px;
+    gap:16px;
     align-items:stretch;
     flex-wrap:wrap;
-    margin-bottom:14px;
+    margin-bottom:16px;
 }
 .es-cardbox,.es-toolbar,.es-library,.es-stats,.es-queue{
     background:var(--panel);
     border:1px solid var(--border);
-    border-radius:20px;
+    border-radius:16px;
     box-shadow:var(--shadow-soft);
 }
 .es-toolbar{
     position:sticky;
     top:12px;
     z-index:120;
-    padding:14px;
+    padding:16px;
     display:flex;
     gap:12px;
     align-items:flex-end;
     flex-wrap:wrap;
-    margin-bottom:14px;
+    margin-bottom:16px;
     backdrop-filter:saturate(1.2) blur(6px);
 }
 .es-toolbar > *{min-width:0}
 .es-toolbar-group{
     display:flex;
     flex-direction:column;
-    gap:8px;
-    min-width:200px;
+    gap:6px;
+    min-width:180px;
     flex:1;
 }
 .es-toolbar-group label{
@@ -152,8 +152,8 @@ button,input,select{outline:none}
     border:1px solid var(--border);
     background:var(--inputBg);
     color:var(--text);
-    border-radius:14px;
-    padding:12px 14px;
+    border-radius:10px;
+    padding:10px 14px;
     transition:.2s;
 }
 .es-input:focus,.es-select:focus,.es-textarea:focus{
@@ -162,45 +162,52 @@ button,input,select{outline:none}
 }
 .es-btn{
     border:none;
-    border-radius:14px;
-    min-height:46px;
+    border-radius:10px;
+    min-height:42px;
     padding:0 16px;
     cursor:pointer;
-    font-weight:800;
+    font-weight:700;
     transition:.2s;
     background:var(--chip);
     color:var(--chipText);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
 }
-.es-btn:hover{transform:translateY(-1px)}
+.es-btn:hover{transform:translateY(-1px); filter: brightness(1.05);}
 .es-btn:active{transform:translateY(0)}
 .es-btn-primary{background:var(--primary);color:#fff}
 .es-btn-primary:hover{background:var(--primary-hover)}
 .es-btn-danger{background:var(--danger);color:#fff}
 .es-btn-success{background:var(--success);color:#fff}
 .es-btn-warning{background:var(--warning);color:#fff}
+
 .es-toggle{
     display:flex;
     align-items:center;
-    gap:8px;
+    gap:6px;
     user-select:none;
     cursor:pointer;
-    font-size:.95rem;
+    font-size:.9rem;
 }
-.es-toggle input{transform:scale(1.15)}
+.es-toggle input{transform:scale(1.1)}
+
 .es-chips{
     display:flex;
     gap:8px;
     flex-wrap:wrap;
+    margin-bottom:16px;
 }
 .es-chip{
     border:1px solid var(--border);
     background:var(--chip);
     color:var(--chipText);
     border-radius:999px;
-    padding:8px 12px;
+    padding:6px 14px;
     cursor:pointer;
     font-weight:700;
-    font-size:.86rem;
+    font-size:.85rem;
+    transition: .2s;
 }
 .es-chip.active{
     background:var(--primary);
@@ -209,40 +216,41 @@ button,input,select{outline:none}
 }
 .es-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
     gap:16px;
 }
 .es-library{
-    padding:14px;
+    padding:16px;
 }
 .es-library-header{
     display:flex;
     gap:10px;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:12px;
+    margin-bottom:14px;
     flex-wrap:wrap;
 }
 .es-library-title{
     margin:0;
-    font-size:1.15rem;
+    font-size:1.2rem;
     font-weight:800;
 }
-.es-subtle{color:var(--muted);font-size:.9rem}
+.es-subtle{color:var(--muted);font-size:.85rem}
 .es-drop{
     margin:14px 0;
     border:2px dashed rgba(107,114,128,.35);
-    border-radius:18px;
-    padding:18px;
+    border-radius:12px;
+    padding:20px;
     text-align:center;
     color:var(--muted);
     background:rgba(255,255,255,.25);
+    cursor: pointer;
 }
 #event-soundboard[data-theme="dark"] .es-drop{
     background:rgba(255,255,255,.02);
 }
 .es-panel{
-    padding:14px;
+    padding:16px;
 }
 .es-section{
     margin-top:16px;
@@ -251,11 +259,50 @@ button,input,select{outline:none}
     margin:0 0 10px;
     font-size:1rem;
 }
-.es-queue-list,.es-folder-list,.es-fav-list{
+.es-queue-list,.es-folder-list,.es-fav-list,.es-history-list,.es-hotkey-list{
     display:flex;
-    flex-direction:column;
-    gap:10px;
+    flex-direction: column;
+    gap:8px;
 }
+
+.es-fav-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+}
+
+.es-hotkey-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+}
+
+.es-hotkey-item{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    align-items:center;
+    border:1px solid var(--border);
+    background:var(--card);
+    padding:10px 12px;
+    border-radius:12px;
+}
+.es-hotkey-item .meta{
+    min-width:0;
+    flex:1;
+}
+.es-hotkey-item strong{
+    display:block;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    font-size: .9rem;
+}
+.es-hotkey-item small{
+    color:var(--muted);
+    font-size: .75rem;
+}
+
 .es-queue-item,.es-folder-item,.es-fav-item,.es-history-item{
     display:flex;
     justify-content:space-between;
@@ -264,7 +311,7 @@ button,input,select{outline:none}
     border:1px solid var(--border);
     background:var(--card);
     padding:10px 12px;
-    border-radius:14px;
+    border-radius:12px;
 }
 .es-queue-item .meta,.es-folder-item .meta,.es-fav-item .meta,.es-history-item .meta{
     min-width:0;
@@ -274,26 +321,32 @@ button,input,select{outline:none}
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
+    font-size: .9rem;
 }
 .es-queue-item small,.es-folder-item small,.es-fav-item small,.es-history-item small{
     color:var(--muted);
+    font-size: .75rem;
 }
 
-/* cards */
+/* New Modern Card Layout */
 .es-card{
     background:var(--card);
     border:1px solid var(--border);
-    border-radius:20px;
+    border-radius:16px;
     padding:16px;
     box-shadow:var(--shadow-soft);
     transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
     position:relative;
     overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    justify-content: space-between;
+    gap:12px;
 }
-.es-card:hover{transform:translateY(-2px)}
+.es-card:hover{transform:translateY(-2px); box-shadow: var(--shadow);}
 .es-card.active{
     border-color:rgba(255,95,31,.5);
-    box-shadow:0 16px 34px rgba(255,95,31,.16);
+    box-shadow:0 10px 20px rgba(255,95,31,.1);
 }
 .es-card.playing{
     outline:2px solid rgba(255,95,31,.55);
@@ -302,85 +355,94 @@ button,input,select{outline:none}
     content:"★";
     position:absolute;
     right:14px;
-    top:10px;
+    top:12px;
     color:#f59e0b;
-    font-size:1.2rem;
+    font-size:1.1rem;
+    z-index: 2;
 }
 .es-title{
-    margin:0 0 6px;
-    font-size:1.04rem;
-    font-weight:900;
-    line-height:1.35;
+    margin:0;
+    font-size:1.05rem;
+    font-weight:700;
+    line-height:1.4;
+    word-break:break-word;
+    padding-right: 15px;
 }
 .es-meta{
     display:flex;
     flex-wrap:wrap;
-    gap:8px;
-    margin-bottom:12px;
-    color:var(--muted);
-    font-size:.86rem;
+    gap:4px;
+    margin-top:4px;
 }
 .es-tag{
-    padding:4px 10px;
+    padding:2px 8px;
     background:var(--chip);
     color:var(--chipText);
-    border-radius:999px;
-    font-weight:700;
+    border-radius:6px;
+    font-weight:600;
+    font-size:.75rem;
 }
 .es-status{
-    font-size:.88rem;
+    font-size:.8rem;
     color:var(--muted);
-    margin:0 0 12px;
+    margin:0;
 }
-.es-card.active .es-status{color:var(--primary);font-weight:800}
-.es-buttons{
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-    margin-bottom:12px;
+.es-card.active .es-status{color:var(--primary);font-weight:700}
+
+/* Smart Grid Utility Buttons */
+.es-buttons-main {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 8px;
 }
-.es-buttons .es-btn{
-    flex:1 1 110px;
-    min-height:44px;
+.es-buttons-util {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
 }
-.es-row{
-    display:flex;
-    gap:10px;
-    align-items:center;
-    flex-wrap:wrap;
+.es-buttons-util .es-btn {
+    min-height: 32px;
+    font-size: 0.75rem;
+    padding: 0 4px;
+    border-radius: 6px;
 }
-.es-row > *{flex:1 1 auto}
+.es-buttons-danger-zone {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+}
+.es-buttons-danger-zone .es-btn {
+    min-height: 32px;
+    font-size: 0.75rem;
+    padding: 0 4px;
+    border-radius: 6px;
+}
+
 .es-seek{
     width:100%;
+    margin: 0;
+    cursor: pointer;
 }
 .es-time{
-    margin-top:8px;
+    margin-top:4px;
     display:flex;
     justify-content:space-between;
     gap:10px;
-    font-size:.82rem;
+    font-size:.75rem;
     color:var(--muted);
 }
-.es-mini{
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-    margin-top:10px;
-}
-.es-mini button{
-    flex:0 0 auto;
-    min-height:38px;
-    padding:0 12px;
-    font-size:.85rem;
-}
 .es-wave{
-    height:4px;
+    height:3px;
     width:100%;
     border-radius:999px;
-    background:linear-gradient(90deg,rgba(255,95,31,.2),rgba(255,95,31,.5),rgba(255,95,31,.2));
-    margin-bottom:12px;
-    position:relative;
+    background:transparent;
+    position:absolute;
+    bottom:0;
+    left:0;
     overflow:hidden;
+}
+.es-card.playing .es-wave {
+    background: linear-gradient(90deg,rgba(255,95,31,.2),rgba(255,95,31,.5),rgba(255,95,31,.2));
 }
 .es-wave::after{
     content:"";
@@ -389,6 +451,8 @@ button,input,select{outline:none}
     width:35%;
     left:-35%;
     background:linear-gradient(90deg,transparent,rgba(255,95,31,.65),transparent);
+}
+.es-card.playing .es-wave::after {
     animation:wave 1.9s linear infinite;
 }
 @keyframes wave{
@@ -396,78 +460,68 @@ button,input,select{outline:none}
 }
 
 .es-stats,.es-queue{
-    padding:14px;
+    padding:16px;
 }
 .es-two{
     display:grid;
-    grid-template-columns:1.2fr .8fr;
-    gap:14px;
-    margin-top:14px;
+    grid-template-columns:1.3fr 0.7fr;
+    gap:16px;
+    margin-top:16px;
 }
 .es-statgrid{
     display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
+    grid-template-columns:repeat(2,1fr);
     gap:10px;
 }
 .es-stat{
     border:1px solid var(--border);
-    border-radius:16px;
+    border-radius:12px;
     padding:12px;
     background:var(--card);
+    text-align: center;
 }
 .es-stat strong{
     display:block;
-    font-size:1.15rem;
+    font-size:1.2rem;
 }
 .es-stat span{
     color:var(--muted);
-    font-size:.86rem;
+    font-size:.8rem;
 }
 .es-alert{
-    border:1px solid rgba(255,95,31,.3);
-    background:rgba(255,95,31,.06);
+    border:1px solid rgba(255,95,31,.2);
+    background:rgba(255,95,31,.04);
     color:var(--text);
-    border-radius:14px;
+    border-radius:12px;
     padding:12px;
     margin-top:12px;
-    font-size:.92rem;
+    font-size:.85rem;
 }
 .es-foot{
-    margin-top:14px;
+    margin-top:20px;
     color:var(--muted);
-    font-size:.84rem;
-    line-height:1.45;
+    font-size:.8rem;
+    line-height:1.5;
+    text-align: center;
 }
 .es-hidden{display:none !important}
 
-@media (max-width: 980px){
+.es-hotkey-badge{
+    padding:1px 6px;
+    border-radius:4px;
+    background:rgba(255,95,31,.1);
+    color:var(--primary);
+    font-weight:700;
+    font-size: .75rem;
+    border:1px solid rgba(255,95,31,.2);
+}
+
+@media (max-width: 1200px){
     .es-two{grid-template-columns:1fr}
 }
-@media (max-width: 760px){
-    #event-soundboard{padding:12px}
-    .es-grid{grid-template-columns:1fr}
-    .es-toolbar{position:static}
-    .es-toolbar-group{min-width:100%}
-}
-@media (max-width: 540px){
-    .es-buttons .es-btn{flex-basis:100%}
-    .es-statgrid{grid-template-columns:1fr}
-}
 
-@media (max-width: 1024px){
-    #event-soundboard{padding:12px}
-    .es-top{
-        flex-direction:column;
-    }
-    .es-top > *{
-        width:100%;
-    }
-    .es-cardbox,.es-library,.es-stats,.es-queue{
-        border-radius:18px;
-    }
-}
-
-@media (max-width: 760px){
+@media (max-width: 768px){
+    #event-soundboard { padding: 12px; }
     .es-toolbar{
         padding:12px;
         gap:10px;
@@ -479,108 +533,26 @@ button,input,select{outline:none}
     .es-toolbar > .es-btn,
     .es-toolbar label.es-btn{
         width:100%;
-        justify-content:center;
     }
     .es-grid{
-        grid-template-columns:1fr !important;
+        grid-template-columns: 1fr;
+        gap: 12px;
     }
-    .es-card{
-        padding:14px;
+    .es-fav-list {
+        grid-template-columns: 1fr;
     }
-    .es-buttons .es-btn{
-        flex:1 1 100%;
-        width:100%;
+    .es-top { gap: 12px; }
+    
+    /* Mobile Hotkey Safe Mode */
+    .es-hotkey-panel,
+    .es-hotkey-badge,
+    .es-buttons-util .es-btn:last-child {
+        display:none !important;
     }
-    .es-mini{
-        flex-direction:column;
-    }
-    .es-mini button{
-        width:100%;
-    }
-    .es-statgrid{
-        grid-template-columns:1fr;
-    }
-    .es-loader-box{
-        padding:20px;
-        border-radius:20px;
-    }
-    .es-library-header{
-        align-items:flex-start;
-    }
-    .es-queue-item,
-    .es-folder-item,
-    .es-fav-item,
-    .es-history-item{
-        align-items:flex-start;
-        flex-direction:column;
-    }
-    .es-queue-item .es-btn,
-    .es-folder-item .es-btn,
-    .es-fav-item .es-btn,
-    .es-history-item .es-btn{
-        width:100%;
-    }
-    .es-top{
-        gap:12px;
+    .es-buttons-util {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
-
-@media (max-width: 480px){
-    #event-soundboard{
-        padding:10px;
-    }
-    .es-loader-box{
-        padding:18px;
-    }
-    .es-loader-title{
-        font-size:1.1rem;
-    }
-    .es-loader-sub,
-    .es-loading-text{
-        font-size:.88rem;
-    }
-    .es-card,
-    .es-library,
-    .es-stats,
-    .es-cardbox{
-        padding:12px;
-    }
-    .es-title{
-        font-size:1rem;
-    }
-    .es-meta{
-        gap:6px;
-    }
-    .es-tag{
-        padding:4px 8px;
-        font-size:.8rem;
-    }
-    .es-buttons{
-        gap:8px;
-    }
-    .es-time{
-        font-size:.78rem;
-    }
-    .es-alert,
-    .es-foot{
-        font-size:.8rem;
-    }
-}
-
-@media (max-width: 360px){
-    .es-toolbar-group label{
-        font-size:.8rem;
-    }
-    .es-btn{
-        min-height:42px;
-        padding:0 12px;
-    }
-    .es-input,
-    .es-select{
-        padding:11px 12px;
-    }
-}
-
 </style>
 </head>
 <body>
@@ -608,12 +580,12 @@ button,input,select{outline:none}
                 <input id="es-master-volume" max="100" type="range" value="80" />
             </div>
 
-            <div class="es-toolbar-group" style="min-width:220px;flex:.9">
+            <div class="es-toolbar-group" style="min-width:200px;flex:.9">
                 <label>Folder aktif</label>
                 <select id="es-folder-filter" class="es-select"></select>
             </div>
 
-            <div class="es-toolbar-group" style="min-width:220px;flex:.9">
+            <div class="es-toolbar-group" style="min-width:200px;flex:.9">
                 <label>Kategori aktif</label>
                 <select id="es-category-filter" class="es-select"></select>
             </div>
@@ -629,13 +601,13 @@ button,input,select{outline:none}
         </div>
 
         <div class="es-top">
-            <div class="es-cardbox" style="flex:1.2;padding:14px">
+            <div class="es-cardbox" style="flex:1.2;padding:16px">
                 <div class="es-library-header">
                     <h2 class="es-library-title">Tambah Audio</h2>
                     <div class="es-subtle">Upload, link, atau drag & drop.</div>
                 </div>
 
-                <div class="es-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">
+                <div class="es-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px; margin-bottom: 12px;">
                     <input class="es-input" id="es-new-title" type="text" placeholder="Judul audio" />
                     <input class="es-input" id="es-new-url" type="text" placeholder="URL audio (mp3/ogg/wav)" />
                     <input class="es-input" id="es-new-tags" type="text" placeholder="Tag dipisah koma" />
@@ -648,15 +620,13 @@ button,input,select{outline:none}
                         <option value="Penutup">Penutup</option>
                         <option value="Lainnya">Lainnya</option>
                     </select>
-                    <div class="es-row">
-                        <label class="es-btn es-btn-primary" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:100%">
-                            📁 Upload File
-                            <input type="file" id="es-file-input" accept="audio/*" multiple hidden>
-                        </label>
-                    </div>
+                    <label class="es-btn es-btn-primary" style="width:100%">
+                        📁 Upload File
+                        <input type="file" id="es-file-input" accept="audio/*" multiple hidden>
+                    </label>
                 </div>
 
-                <div class="es-row" style="margin-top:10px">
+                <div class="es-row" style="margin-top:10px; display: flex; flex-wrap: wrap; gap: 12px;">
                     <button class="es-btn es-btn-primary" id="es-add-url">➕ Tambah dari Link</button>
                     <button class="es-btn" id="es-clear-fields">🧹 Bersihkan</button>
                     <label class="es-toggle"><input type="checkbox" id="es-mix-mode"> Mix mode</label>
@@ -665,30 +635,38 @@ button,input,select{outline:none}
                     <label class="es-toggle"><input type="checkbox" id="es-show-favorites" checked> Tampilkan favorit</label>
                 </div>
 
-                <div class="es-drop" id="es-drop">Tarik file audio ke sini. Browser akan pura-pura santai, tapi dia kerjanya serius.</div>
+                <div class="es-drop" id="es-drop">Tarik file audio ke sini untuk upload otomatis.</div>
 
                 <div class="es-alert">
-                    Default yang dikunci: <b>🕌 Backsound Islami</b>, <b>🇮🇩 Indonesia Raya</b>, <b>🎓 Musik Pengiring</b>. Tiga ini tidak bisa dihapus.
+                    Default yang dikunci: <b>🕌 Backsound Islami</b>, <b>🇮🇩 Indonesia Raya</b>, <b>🎓 Musik Pengiring</b>. Sistem tidak mengizinkan penghapusan aset utama ini.
                 </div>
             </div>
 
-            <div class="es-cardbox" style="flex:.8;padding:14px">
+            <div class="es-cardbox" style="flex:.8;padding:16px">
                 <div class="es-library-header">
                     <h2 class="es-library-title">Favorit</h2>
-                    <div class="es-subtle">Tombol cepat dan hotkey 1-9.</div>
+                    <div class="es-subtle">Akses cepat tombol penting.</div>
                 </div>
                 <div class="es-fav-list" id="es-fav-list"></div>
 
                 <div class="es-section">
-                    <h3>Statistik</h3>
+                    <h3>Statistik Penggunaan</h3>
                     <div class="es-statgrid">
                         <div class="es-stat"><strong id="es-stat-total">0</strong><span>Total audio</span></div>
                         <div class="es-stat"><strong id="es-stat-fav">0</strong><span>Favorit</span></div>
                         <div class="es-stat"><strong id="es-stat-play">0</strong><span>Total play</span></div>
-                        <div class="es-stat"><strong id="es-stat-min">0</strong><span>Menit terpakai</span></div>
+                        <div class="es-stat"><strong id="es-stat-min">0</strong><span>Menit aktif</span></div>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="es-section es-hotkey-panel" style="margin-top:0;padding:16px;background:var(--panel);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-soft)">
+            <div class="es-library-header">
+                <h2 class="es-library-title">Hotkey Manager</h2>
+                <div class="es-subtle">Mapping keyboard manual angka 1–9 untuk memicu audio instan.</div>
+            </div>
+            <div class="es-hotkey-list" id="es-hotkey-list"></div>
         </div>
 
         <div class="es-two">
@@ -701,31 +679,29 @@ button,input,select{outline:none}
                 <div class="es-grid" id="es-grid"></div>
             </div>
 
-            <div class="es-panel">
-                <div class="es-stats">
+            <div class="es-panel" style="padding: 0;">
+                <div class="es-queue">
                     <div class="es-library-header">
                         <h2 class="es-library-title">Queue & Playlist</h2>
-                        <div class="es-subtle">Mainkan berurutan kalau mau acara terasa profesional, bukan panik.</div>
+                        <div class="es-subtle">Manajemen urutan pemutaran acara panggung.</div>
                     </div>
-                    <div class="es-row" style="margin-bottom:10px">
+                    <div class="es-row" style="margin-bottom:12px; display:flex; gap:8px;">
                         <button class="es-btn es-btn-success" id="es-play-queue">▶ Play Queue</button>
-                        <button class="es-btn" id="es-clear-queue">🗑 Clear Queue</button>
+                        <button class="es-btn" id="es-clear-queue">🗑 Clear</button>
                     </div>
                     <div class="es-queue-list" id="es-queue-list"></div>
                 </div>
 
-                <div class="es-section es-stats">
+                <div class="es-section es-queue">
                     <div class="es-library-header">
-                        <h2 class="es-library-title">Folder/Koleksi</h2>
-                        <div class="es-subtle">Audio custom yang terkumpul rapi.</div>
+                        <h2 class="es-library-title">Folder / Koleksi</h2>
                     </div>
                     <div class="es-folder-list" id="es-folder-list"></div>
                 </div>
 
-                <div class="es-section es-stats">
+                <div class="es-section es-queue">
                     <div class="es-library-header">
                         <h2 class="es-library-title">Riwayat Putar</h2>
-                        <div class="es-subtle">10 terakhir.</div>
                     </div>
                     <div class="es-history-list" id="es-history-list"></div>
                 </div>
@@ -733,9 +709,8 @@ button,input,select{outline:none}
         </div>
 
         <div class="es-foot">
-            Hotkey: 1–9 memutar favorit/default berurutan, Space play/pause item aktif, S stop all, F cari, D tema, Q queue mode.
-            Backup JSON menyimpan metadata + audio data URL untuk file upload. Link audio ikut dibackup sebagai URL.<br/>
-            Dibuat sepenuh hati oleh <a href="https://maliksiz.my.id">Maliksiz</a> 
+            Kontrol Navigasi: [Angka 1-9] Pemicu Hotkey Terpilih | [Spacebar] Play/Pause Aktif | [S] Stop All | [/] Kolom Pencarian | [D] Ganti Tema | [Q] Mode Antrean.<br/>
+            Dibuat sepenuh hati oleh <a href="https://maliksiz.my.id" style="color: var(--primary); text-decoration: none; font-weight: bold;">Maliksiz</a>
         </div>
     </div>
 </div>
@@ -750,7 +725,6 @@ const STORE = 'sounds';
 const SETTINGS_KEY = 'es_v3_settings';
 const STATS_KEY = 'es_v3_stats';
 const HISTORY_KEY = 'es_v3_history';
-const DEFAULT_VOLUME = 0.8;
 
 const DEFAULT_SOUNDS = [
     {
@@ -763,6 +737,7 @@ const DEFAULT_SOUNDS = [
         favorite: true,
         locked: true,
         loop: false,
+        hotkey: null,
         plays: 0,
         createdAt: Date.now()
     },
@@ -776,6 +751,7 @@ const DEFAULT_SOUNDS = [
         favorite: true,
         locked: true,
         loop: false,
+        hotkey: null,
         plays: 0,
         createdAt: Date.now()
     },
@@ -789,6 +765,7 @@ const DEFAULT_SOUNDS = [
         favorite: true,
         locked: true,
         loop: false,
+        hotkey: null,
         plays: 0,
         createdAt: Date.now()
     },
@@ -802,6 +779,7 @@ const DEFAULT_SOUNDS = [
         favorite: false,
         locked: true,
         loop: false,
+        hotkey: null,
         plays: 0,
         createdAt: Date.now()
     },
@@ -815,6 +793,7 @@ const DEFAULT_SOUNDS = [
         favorite: false,
         locked: true,
         loop: false,
+        hotkey: null,
         plays: 0,
         createdAt: Date.now()
     }
@@ -848,6 +827,7 @@ const els = {
     playQueue: document.getElementById('es-play-queue'),
     clearQueue: document.getElementById('es-clear-queue'),
     favList: document.getElementById('es-fav-list'),
+    hotkeyList: document.getElementById('es-hotkey-list'),
     folderList: document.getElementById('es-folder-list'),
     historyList: document.getElementById('es-history-list'),
     drop: document.getElementById('es-drop'),
@@ -919,6 +899,10 @@ function buildTags(arr){
     if(!Array.isArray(arr)) return [];
     return arr.map(x => String(x).trim()).filter(Boolean).slice(0,10);
 }
+function normalizeHotkey(v){
+    const n = Number(v);
+    return Number.isInteger(n) && n >= 1 && n <= 9 ? n : null;
+}
 function normalSound(input){
     const now = Date.now();
     return {
@@ -931,6 +915,7 @@ function normalSound(input){
         favorite: !!input.favorite,
         locked: !!input.locked,
         loop: !!input.loop,
+        hotkey: normalizeHotkey(input.hotkey),
         plays: Number(input.plays || 0),
         duration: Number(input.duration || 0),
         mime: input.mime || '',
@@ -1236,9 +1221,9 @@ function renderFavList(){
         <div class="es-fav-item">
             <div class="meta">
                 <strong>${escapeHTML(s.title)}</strong>
-                <small>${escapeHTML(s.category || 'Lainnya')} • ${escapeHTML(s.folder || 'Default')}</small>
+                <small>${escapeHTML(s.category || 'Lainnya')}</small>
             </div>
-            <button class="es-btn es-btn-primary" data-play="${escapeHTML(s.id)}">▶</button>
+            <button class="es-btn es-btn-primary" data-play="${escapeHTML(s.id)}" style="min-height:32px; padding:0 12px;">▶</button>
         </div>
     `).join('');
     els.favList.querySelectorAll('[data-play]').forEach(btn=>{
@@ -1247,6 +1232,68 @@ function renderFavList(){
             if(s) playSound(s);
         });
     });
+}
+function renderHotkeyManager(){
+    const sounds = (window.__allSounds || []);
+    let html = '';
+    for(let i=1;i<=9;i++){
+        const selected = sounds.find(s => Number(s.hotkey) === i);
+        html += `
+            <div class="es-hotkey-item">
+                <div class="meta">
+                    <strong>[${i}] ${selected ? escapeHTML(selected.title) : 'Kosong'}</strong>
+                    <small>${selected ? 'Sudah diatur' : 'Belum diatur'}</small>
+                </div>
+                <button class="es-btn" type="button" data-hotkey-button="${i}" style="min-height:32px; padding:0 10px; font-size:0.8rem;">
+                    Set
+                </button>
+            </div>
+        `;
+    }
+    els.hotkeyList.innerHTML = html;
+
+    els.hotkeyList.querySelectorAll('[data-hotkey-button]').forEach(btn=>{
+        btn.addEventListener('click', async ()=>{
+            const key = Number(btn.dataset.hotkeyButton);
+            const current = (window.__allSounds || []).find(s => Number(s.hotkey) === key);
+            const title = current ? current.title : 'belum ada';
+            const picked = prompt(`Hotkey ${key} aktif untuk: ${title}
+Masukkan judul audio yang akan dihubungkan, atau isi ID audio bila Anda tahu.`, current ? current.id : '');
+            if(picked === null) return;
+            const value = String(picked).trim();
+            if(!value){
+                await assignHotkey(key, null);
+                await renderAll();
+                return;
+            }
+            const all = await getAllSounds();
+            const target = all.find(s => s.id === value || s.title.toLowerCase() === value.toLowerCase());
+            if(!target){
+                alert('Audio tidak ditemukan.');
+                return;
+            }
+            await assignHotkey(key, target.id);
+            await renderAll();
+        });
+    });
+}
+async function assignHotkey(key, soundId){
+    const all = await getAllSounds();
+    for(const s of all){
+        if(Number(s.hotkey) === Number(key)){
+            s.hotkey = null;
+            s.updatedAt = Date.now();
+            await putSound(s);
+        }
+    }
+    if(soundId){
+        const target = all.find(s => s.id === soundId);
+        if(target){
+            target.hotkey = Number(key);
+            target.updatedAt = Date.now();
+            await putSound(target);
+        }
+    }
 }
 function renderHistory(){
     if(!history.length){
@@ -1257,7 +1304,7 @@ function renderHistory(){
         <div class="es-history-item">
             <div class="meta">
                 <strong>${escapeHTML(h.title)}</strong>
-                <small>${escapeHTML(h.category)} • ${new Date(h.at).toLocaleString('id-ID')}</small>
+                <small>${escapeHTML(h.category)} • ${new Date(h.at).toLocaleTimeString('id-ID')}</small>
             </div>
         </div>
     `).join('');
@@ -1271,9 +1318,9 @@ function renderQueue(){
         <div class="es-queue-item">
             <div class="meta">
                 <strong>${idx+1}. ${escapeHTML(s.title)}</strong>
-                <small>${escapeHTML(s.category || 'Lainnya')} • ${escapeHTML(s.folder || 'Default')}</small>
+                <small>${escapeHTML(s.category || 'Lainnya')}</small>
             </div>
-            <button class="es-btn" data-remove="${escapeHTML(s.id)}">Hapus</button>
+            <button class="es-btn es-btn-danger" data-remove="${escapeHTML(s.id)}" style="min-height:28px; padding:0 8px; font-size:0.75rem;">Hapus</button>
         </div>
     `).join('');
     els.queueList.querySelectorAll('[data-remove]').forEach(btn=>{
@@ -1301,7 +1348,7 @@ function renderFolderList(all){
                 <strong>${escapeHTML(name)}</strong>
                 <small>${byFolder[name].length} audio</small>
             </div>
-            <button class="es-btn" data-folder="${escapeHTML(name)}">Filter</button>
+            <button class="es-btn" data-folder="${escapeHTML(name)}" style="min-height:28px; padding:0 10px; font-size:0.75rem;">Filter</button>
         </div>
     `).join('');
     els.folderList.querySelectorAll('[data-folder]').forEach(btn=>{
@@ -1369,34 +1416,44 @@ function createCard(sound){
     if(sound.favorite) card.classList.add('favorite');
     card.dataset.id = sound.id;
 
-    const tags = (sound.tags || []).slice(0,4).map(t => `<span class="es-tag">#${escapeHTML(t)}</span>`).join('');
+    const tags = (sound.tags || []).slice(0,2).map(t => `<span class="es-tag">#${escapeHTML(t)}</span>`).join('');
     card.innerHTML = `
-        <div class="es-wave"></div>
-        <h3 class="es-title">${escapeHTML(sound.title)}</h3>
-        <div class="es-meta">
-            <span class="es-tag">${escapeHTML(sound.category || 'Lainnya')}</span>
-            <span class="es-tag">${escapeHTML(sound.folder || 'Default')}</span>
-            ${tags}
+        <div class="es-card-head">
+            <h3 class="es-title">${escapeHTML(sound.title)}</h3>
+            <div class="es-meta">
+                <span class="es-tag" style="background: rgba(255,95,31,0.1); color: var(--primary);">${escapeHTML(sound.category || 'Lainnya')}</span>
+                ${sound.hotkey ? `<span class="es-hotkey-badge">K-${sound.hotkey}</span>` : ''}
+                ${tags}
+            </div>
         </div>
-        <div class="es-status">${sound.locked ? 'Siap dimainkan' : 'Siap dimainkan (custom)'}</div>
-        <div class="es-buttons">
+        
+        <div class="es-status">${sound.locked ? 'Sistem Aset' : 'Custom Audio'}</div>
+        
+        <div class="es-seek-wrap">
+            <input type="range" class="es-seek" min="0" max="100" value="0">
+            <div class="es-time">
+                <span class="current">00:00</span>
+                <span class="duration">${formatTime(sound.duration || 0)}</span>
+            </div>
+        </div>
+
+        <div class="es-buttons-main">
             <button class="es-btn es-btn-primary es-play">▶ PLAY</button>
             <button class="es-btn es-stop">⏹ STOP</button>
-            <button class="es-btn es-fav">${sound.favorite ? '★ Favorit' : '☆ Favorit'}</button>
+        </div>
+
+        <div class="es-buttons-util">
+            <button class="es-btn es-fav" title="Favorit">${sound.favorite ? '★ Fav' : '☆ Fav'}</button>
             <button class="es-btn es-queue">➕ Queue</button>
-            <button class="es-btn es-loop">${sound.loop ? 'Loop ✓' : 'Loop'}</button>
-            <button class="es-btn es-edit">✏ Edit</button>
+            <button class="es-btn es-loop">${sound.loop ? 'Loop ✓' : '🔁 Loop'}</button>
+        </div>
+
+        <div class="es-buttons-danger-zone">
+            <button class="es-btn es-edit">✏️ Edit</button>
+            <button class="es-btn es-hotkey">⌨️ Key</button>
             ${sound.locked ? '' : '<button class="es-btn es-btn-danger es-delete">🗑 Hapus</button>'}
         </div>
-        <input type="range" class="es-seek" min="0" max="100" value="0">
-        <div class="es-time">
-            <span class="current">00:00</span>
-            <span class="duration">${formatTime(sound.duration || 0)}</span>
-        </div>
-        <div class="es-mini">
-            <button class="es-btn es-addfav">⭐ Quick Fav</button>
-            <button class="es-btn es-playnext">⏭ Play Next</button>
-        </div>
+        <div class="es-wave"></div>
     `;
 
     const status = card.querySelector('.es-status');
@@ -1406,9 +1463,8 @@ function createCard(sound){
     const queueBtn = card.querySelector('.es-queue');
     const loopBtn = card.querySelector('.es-loop');
     const editBtn = card.querySelector('.es-edit');
+    const hotkeyBtn = card.querySelector('.es-hotkey');
     const deleteBtn = card.querySelector('.es-delete');
-    const quickFavBtn = card.querySelector('.es-addfav');
-    const playNextBtn = card.querySelector('.es-playnext');
 
     const audio = getAudio(sound.id, sound.url);
     audio.volume = settings.volume / 100;
@@ -1432,13 +1488,6 @@ function createCard(sound){
         renderAll();
     });
 
-    quickFavBtn.addEventListener('click', async ()=>{
-        sound.favorite = true;
-        sound.updatedAt = Date.now();
-        await putSound(sound);
-        renderAll();
-    });
-
     queueBtn.addEventListener('click', ()=>{
         if(!currentQueue.find(x => x.id === sound.id)){
             currentQueue.push(sound);
@@ -1453,11 +1502,24 @@ function createCard(sound){
         renderAll();
     });
 
-    playNextBtn.addEventListener('click', ()=>{
-        currentQueue = [sound, ...currentQueue.filter(x => x.id !== sound.id)];
-        queueIndex = 0;
-        renderQueue();
-        playSound(sound);
+    hotkeyBtn.addEventListener('click', async ()=>{
+        const value = prompt('Masukkan hotkey 1-9, atau kosongkan untuk hapus hotkey', sound.hotkey || '');
+        if(value === null) return;
+        const trimmed = String(value).trim();
+        if(!trimmed){
+            await assignHotkey(0, null);
+            sound.hotkey = null;
+            await putSound(sound);
+            renderAll();
+            return;
+        }
+        const key = Number(trimmed);
+        if(!Number.isInteger(key) || key < 1 || key > 9){
+            alert('Hotkey hanya boleh angka 1 sampai 9.');
+            return;
+        }
+        await assignHotkey(key, sound.id);
+        renderAll();
     });
 
     editBtn.addEventListener('click', async ()=>{
@@ -1523,6 +1585,7 @@ async function renderAll(){
         renderCategoryChips(merged);
         renderFolderFilter(merged);
         renderFavList();
+        renderHotkeyManager();
         renderFolderList(merged);
         renderHistory();
         renderQueue();
@@ -1620,6 +1683,7 @@ async function addUrlSound(){
         favorite: false,
         locked: false,
         loop: false,
+        hotkey: null,
         source: 'url'
     });
     await putSound(sound);
@@ -1658,6 +1722,7 @@ async function addFiles(files){
             favorite: false,
             locked: false,
             loop: false,
+            hotkey: null,
             mime: file.type,
             source: 'upload'
         });
@@ -1754,6 +1819,7 @@ function registerToolbarEvents(){
 
     document.addEventListener('keydown', async (e)=>{
         if(e.target && ['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
+
         if(e.key === '/'){
             e.preventDefault();
             els.search.focus();
@@ -1785,10 +1851,10 @@ function registerToolbarEvents(){
             }
             return;
         }
+
         const n = Number(e.key);
         if(Number.isInteger(n) && n >= 1 && n <= 9){
-            const favorites = (window.__allSounds || []).filter(s => s.favorite || s.locked).slice(0,9);
-            const target = favorites[n-1];
+            const target = (window.__allSounds || []).find(s => Number(s.hotkey) === n);
             if(target) playSound(target);
         }
     });
