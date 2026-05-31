@@ -1,1 +1,1 @@
-Ini adalah Preset kode dan preset soundboard web yang bebas digunakan oleh semua user (tidak termasuk musik karena bisa saja memiliki hak cipta)
+Preset kode dan komponen web soundboard ini dapat digunakan secara bebas oleh publik. Pengecualian berlaku untuk aset musik karena ketentuan hak cipta
